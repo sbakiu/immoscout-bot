@@ -11,5 +11,8 @@
     "routes": [{
         "src": "(.*)",
         "dest": "index.py"
-    }]
+    }],
+    "github": {
+        "enabled": true
+      }
 }
