@@ -4,10 +4,6 @@ from flask import Flask, Response, __version__
 import json
 from bs4 import BeautifulSoup
 
-# DB_BUCKET = os.environ['DB_BUCKET']
-# DB_AUTH_KEY = os.environ['DB_AUTH_KEY']
-# BOT_TOKEN = os.environ['BOT_TOKEN']
-# CHAT_ID = os.environ['CHAT_ID']
 NOTIFICATION_URL = 'https://api.pushbullet.com/v2/pushes'
 NOTIFICATION_AUTH_KEY = os.environ['NOTIFICATION_AUTH_KEY']
 
