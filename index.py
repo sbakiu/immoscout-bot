@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 NOTIFICATION_URL = 'https://api.pushbullet.com/v2/pushes'
 NOTIFICATION_AUTH_KEY = os.environ['NOTIFICATION_AUTH_KEY']
 
+
 BAYERNHEIM = "https://bayernheim.de/mieten/"
 default_text = "Im Moment sind wir im Aufbau unseres Wohnungsbestandes. Sobald wir Wohnraum zur Vermietung anbieten können, werden wir an dieser Stelle berichten."
 
