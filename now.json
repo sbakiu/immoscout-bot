@@ -2,11 +2,7 @@
     "version": 2,
     "name": "apartment-notifier",
     "env": {
-        "DB_BUCKET": "@db_bucket",
-        "DB_AUTH_KEY": "@db_auth_key",
-        "BOT_TOKEN": "@bot_token",
-        "CHAT_ID": "@chat_id",
-        "IMMO_SEARCH_URL": "@immo_search_url"
+        "NOTIFICATION_AUTH_KEY": "@notification_auth_key"
     },
     "builds": [{
         "src": "**/*.py",
