@@ -28,7 +28,7 @@ def find_new_places():
     logger.debug("Received Request BayernHeim")
 
     mieten = requests.get(BAYERNHEIM)
-    soup = BeautifulSoup(mieten.text, features="html.parser")
+    # soup = BeautifulSoup(mieten.text, features="html.parser")
     hash_sha3_512 = hashlib.sha3_512(mieten.text.encode('utf-8')).hexdigest()
     should_notify = False
     # check if hash exists in db
