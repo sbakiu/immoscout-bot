@@ -4,7 +4,7 @@ from flask import Flask, Response, __version__
 import json
 import logging
 # from bs4 import BeautifulSoup
-import hashlib
+from hashlib import md5
 
 NOTIFICATION_URL = 'https://api.pushbullet.com/v2/pushes'
 NOTIFICATION_AUTH_KEY = os.environ['NOTIFICATION_AUTH_KEY']
@@ -29,7 +29,7 @@ def find_new_places():
 
     mieten = requests.get(BAYERNHEIM)
     # soup = BeautifulSoup(mieten.text, features="html.parser")
-    hash_sha3_512 = hashlib.md5(mieten.text.encode('utf-8')).hexdigest()
+    hash_sha3_512 = md5(mieten.text.encode('utf-8')).hexdigest()
     should_notify = False
     # check if hash exists in db
     headers = {'x-apikey': DB_KEY, 'Content-Type': 'application/json'}
