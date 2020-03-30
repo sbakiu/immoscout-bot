@@ -3,7 +3,7 @@ import os
 from flask import Flask, Response, __version__
 import json
 import logging
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 import hashlib
 
 NOTIFICATION_URL = 'https://api.pushbullet.com/v2/pushes'
