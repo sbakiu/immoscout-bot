@@ -5,12 +5,15 @@ import json
 import logging
 # from bs4 import BeautifulSoup
 from hashlib import sha3_512
+from pymongo import MongoClient
 
 NOTIFICATION_URL = 'https://api.pushbullet.com/v2/pushes'
 NOTIFICATION_AUTH_KEY = os.environ['NOTIFICATION_AUTH_KEY']
 
 DB_KEY = os.environ["DB_KEY"]
 DB_NAME = os.environ["DB_NAME"]
+DB_USERNAME = os.environ["DB_USERNAME"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
 COLLECTION_NAME = os.environ["COLLECTION_NAME"]
 DB_URL = f"https://{DB_NAME}.restdb.io/rest/{COLLECTION_NAME}"
 
@@ -23,6 +26,23 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+def add_to_database(hash):
+    client = MongoClient("mongodb+srv://%s:%s@cluster0-6gkyq.mongodb.net/test?retryWrites=true&w=majority" % (DB_USERNAME, DB_PASSWORD))
+    hash_obj = {"hash": hash}
+    db = client.appartmentSearch
+    hashes = db.hashcollection
+    hash_id = hashes.insert_one(hash_obj).inserted_id
+    logger.info(hash_id)
+
+def check_if_exists_in_database(hash):
+    client = MongoClient("mongodb+srv://%s:%s@cluster0-6gkyq.mongodb.net/test?retryWrites=true&w=majority" % (DB_USERNAME, DB_PASSWORD))
+    hash_obj = {"hash": hash}
+    db = client.appartmentSearch
+    hashes = db.hashcollection
+
+    db_obj = hashes.find_one(hash_obj)
+    print(str(db_obj))
+
 @app.route('/checkBayernheim')
 def find_new_places():
     logger.debug("Received Request BayernHeim")
@@ -32,6 +52,7 @@ def find_new_places():
     hash_sha3_512 = sha3_512(mieten.text.encode('utf-8')).hexdigest()
     should_notify = False
     # check if hash exists in db
+    check_if_exists_in_database(hash_sha3_512)
     headers = {'x-apikey': DB_KEY, 'Content-Type': 'application/json'}
     filter_url = f"{DB_URL}?q={{\"hash\":\"{hash_sha3_512}\"}}" 
     request_get = requests.get(filter_url, headers=headers)
@@ -49,6 +70,8 @@ def find_new_places():
 
     if should_notify:
         logger.debug("Sending Notification")
+
+        add_to_database(hash_sha3_512)
 
         # Send DB Request
         headers = {'x-apikey': DB_KEY, 'Content-Type': 'application/json'}

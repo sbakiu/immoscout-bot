@@ -5,6 +5,8 @@
         "NOTIFICATION_AUTH_KEY": "@notification_auth_key",
         "DB_KEY": "@db_key",
         "DB_NAME": "@db_name",
+        "DB_USERNAME": "@db_username",
+        "DB_PASSWORD": "@db_password",
         "COLLECTION_NAME": "@collection_name"
     },
     "builds": [{
