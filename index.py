@@ -29,7 +29,7 @@ def find_new_places():
 
     mieten = requests.get(BAYERNHEIM)
     # soup = BeautifulSoup(mieten.text, features="html.parser")
-    hash_sha3_512 = hashlib.sha3_512(mieten.text.encode('utf-8')).hexdigest()
+    hash_sha3_512 = hashlib.md5(mieten.text.encode('utf-8')).hexdigest()
     should_notify = False
     # check if hash exists in db
     headers = {'x-apikey': DB_KEY, 'Content-Type': 'application/json'}
