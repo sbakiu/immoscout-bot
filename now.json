@@ -2,7 +2,10 @@
     "version": 2,
     "name": "apartment-notifier",
     "env": {
-        "NOTIFICATION_AUTH_KEY": "@notification_auth_key"
+        "NOTIFICATION_AUTH_KEY": "@notification_auth_key",
+        "DB_KEY": "@db_key",
+        "DB_NAME": "@db_name",
+        "COLLECTION_NAME": "@collection_name"
     },
     "builds": [{
         "src": "**/*.py",
