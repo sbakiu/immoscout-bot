@@ -44,8 +44,7 @@ def find_new_places():
         logging.info("Hash not found for Bayernheim")
     else:
         for obj in req_raw:
-            # should_notify = False
-            should_notify = True
+            should_notify = False
             logger.debug(obj.get("_id"))
 
     if should_notify:
