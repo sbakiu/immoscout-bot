@@ -2,12 +2,13 @@
     "version": 2,
     "name": "apartment-notifier",
     "env": {
-        "NOTIFICATION_AUTH_KEY": "@notification_auth_key",
-        "DB_KEY": "@db_key",
         "DB_NAME": "@db_name",
         "DB_USERNAME": "@db_username",
         "DB_PASSWORD": "@db_password",
-        "COLLECTION_NAME": "@collection_name"
+        "COLLECTION_NAME": "@collection_name",
+        "IMMO_SEARCH_URL": "@immo_search_url",
+        "BOT_TOKEN": "@bot_token",
+        "CHAT_ID": "@chat_id"
     },
     "builds": [{
         "src": "**/*.py",

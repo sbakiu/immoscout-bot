@@ -2,3 +2,4 @@ lauch.json
 .vscode/*
 __pycache__/*
 .now
+setup.sh
