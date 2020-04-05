@@ -13,7 +13,6 @@ COLLECTION_NAME = os.environ["COLLECTION_NAME"]
 
 BOT_TOKEN = os.environ['BOT_TOKEN']
 CHAT_ID = os.environ['CHAT_ID']
-bot = telegram.Bot(token=BOT_TOKEN)
 
 BAYERNHEIM = "https://bayernheim.de/mieten/"
 
@@ -21,6 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+bot = telegram.Bot(token=BOT_TOKEN)
 
 def get_db_collection():
     client = MongoClient(
