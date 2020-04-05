@@ -49,7 +49,7 @@ def check_if_exists_in_database(hash_obj):
 def get_all_hashes_in_database():
     hashes = get_db_collection()
 
-    db_objs = hashes.find().sort("_id", -1).limit(50)
+    db_objs = hashes.find().sort("_id", -1).limit(20)
     hashes_in_db = []
     for db_obj in db_objs:
         hashes_in_db.append(db_obj["hash"])
@@ -88,9 +88,9 @@ def search_immobilienscout():
         apartments = [apartments]
 
     for apartment in apartments:
-        hash_id = sha3_512(apartment['@id'].encode('utf-8')).hexdigest()
-        hash_obj = {"hash": hash_id}
-        if not hash_id in seen_apartments:
+        # hash_id = sha3_512(apartment['@id'].encode('utf-8')).hexdigest()
+        hash_obj = {"hash": apartment['@id']}
+        if not apartment['@id'] in seen_apartments:
             unseen_apartments.append(apartment)
             seen_apartments.append(hash_obj)
     
@@ -112,14 +112,13 @@ def search_immobilienscout():
         
         # If you are interested only in public companies comment out the next line.
         push_notification(text)
-        newly_seen_appartments.append(apartment)
+        newly_seen_appartments.append({"hash": apartment['@id']})
 
     if newly_seen_appartments:
-        add_many_to_database(seen_apartments)
+        add_many_to_database(newly_seen_appartments)
 
     return {
-        'status' : 'SUCCESS',
-        'unseen_apartments' : parsed_unseen_apartments
+        'status' : 'SUCCESS'
     }
 
 @app.route('/checkBayernheim')
