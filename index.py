@@ -69,6 +69,9 @@ def push_notification(text):
 def find_new_places():
     search_bayernheim()
     search_immobilienscout()
+    return {
+        'status' : 'SUCCESS'
+    }
 
 @app.route('/checkimmobilienscout')
 def search_immobilienscout():
