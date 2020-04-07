@@ -114,9 +114,6 @@ def search_immobilienscout():
         push_notification(text)
         add_to_database({"hash": apartment['@id']})
 
-    # for a in newly_seen_appartments:
-    #     add_to_database(a)
-
     return {
         'status' : 'SUCCESS'
     }
