@@ -112,10 +112,10 @@ def search_immobilienscout():
         
         # If you are interested only in public companies comment out the next line.
         push_notification(text)
-        newly_seen_appartments.append({"hash": apartment['@id']})
+        add_to_database({"hash": apartment['@id']})
 
-    for a in newly_seen_appartments:
-        add_to_database(a)
+    # for a in newly_seen_appartments:
+    #     add_to_database(a)
 
     return {
         'status' : 'SUCCESS'
