@@ -93,9 +93,6 @@ def search_immobilienscout():
         if not apartment['@id'] in seen_apartments:
             unseen_apartments.append(apartment)
             seen_apartments.append(hash_obj)
-    return {
-        'status' : 'SUCCESS'
-    }
 
     parsed_unseen_apartments = []
     for unseen_apartment in unseen_apartments:
