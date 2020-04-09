@@ -7,30 +7,33 @@ This application is built to send push notifications for new apartments using an
 ## External services
 
 The application is built to be hosted free and using the free plan of variaty of services online. In order to host the application yourself you will need an account in the following services:
-- [Zeit NOW](https://zeit.co/now) - Serverless hosting platform. Free plan includes 5000 executions per day.
+- [Heroku](https://heroku.com) - Serverless hosting platform with free plan available
 - [mongoDB Atlas](https://www.mongodb.com/cloud) - Free mongoDB hosting. We use this to store what apartments has been seen.
-- [Pushbullet](https://www.pushbullet.com/) - Cross-platform messaging application for instant notifications. Use this as a tool to receive push notifications.
+- [Telegram](https://www.telegram.org/) - Cross-platform messaging application for instant notifications. Used to receive push notifications.
 
 Suggested, but not required:
 - [Freshping](https://www.freshworks.com/website-monitoring/) - Website monitoring service. Use this to keep an eye if the service fails, moreover it serves as an easy scheduling service. 
 
 ## Set up
 
-If you are registered in Zeit NOW, Telegram (and Freshping), you can start setting up the application and try to deploy it.
+If you are registered in Heroku, Telegram (and Freshping), you can start setting up the application and try to deploy it.
 
-### Install Zeit CLI
+### Install Heroku CLI
 
-First install on your local machine and login to [Zeit CLI](https://zeit.co/docs#install-now-cli)
+First install on your local machine and login to [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+```
+export APP_NAME=<YOUR_HEROKU_APP_NAME>
+```
 
 ### Set up database
 
 Create a free accout at [Mongo Cloud](https://www.mongodb.com/cloud) and set up a user for accessing the database.
 
 ```
-$ export DB_USERNAME=<YOUR_DB_USERNAME>
-$ export DB_PASSWORD=<YOUR_DB_PASSEWORD>
-$ export DB_NAME=<YOUR_DB_NAME>
-$ export COLLECTION_NAME=<YOUR_COLLECTION_NAME>
+export DB_USERNAME=<YOUR_DB_USERNAME>
+export DB_PASSWORD=<YOUR_DB_PASSEWORD>
+export DB_NAME=<YOUR_DB_NAME>
+export COLLECTION_NAME=<YOUR_COLLECTION_NAME>
 ```
 
 ### Store API secrets for deployment in Zeit
@@ -70,12 +73,15 @@ If the response does not look like that write a couple of more messages to the b
 
 ### Last steps
 
-After it you can fill up the secret storage of Zeit with your keys.
+Finally, you can set up the configuration varialbes that will be injected as environment varilables to the application
 ```
-$ now secrets add db_bucket $DB_BUCKET
-$ now secrets add db_auth_key $DB_AUTH_KEY
-$ now secrets add bot_token $BOT_TOKEN
-$ now secrets add chat_id $CHAT_ID
+heroku config:set -a $APP_NAME DB_USERNAME=$DB_USERNAME
+heroku config:set -a $APP_NAME DB_PASSWORD=$DB_PASSWORD
+heroku config:set -a $APP_NAME DB_NAME=$DB_NAME
+heroku config:set -a $APP_NAME COLLECTION_NAME=$COLLECTION_NAME
+heroku config:set -a $APP_NAME BOT_TOKEN=$BOT_TOKEN
+heroku config:set -a $APP_NAME CHAT_ID=$CHAT_ID
+heroku config:set -a $APP_NAME SECRET_KEY=<SECRET_KEY>
 ```
 
 ## Customize and deploy
@@ -91,8 +97,8 @@ This URL is used for scraping and for a properly functioning application you sho
 
 After you have copied the URL from the browser run: 
 ```
-$ export IMMO_SEARCH_URL=<YOUR_IMMO_URL>
-$ now secrets add immo_search_url $IMMO_SEARCH_URL
+export IMMO_SEARCH_URL=<YOUR_IMMO_URL>
+heroku config:set -a $APP_NAME IMMO_SEARCH_URL=<IMMOSEARCH_URL>
 ```
 
 Feel free to go crazy with search criterias, you just need to update the variable.
@@ -104,7 +110,7 @@ If you are interested only in the public companies please read and modify lines 
 Deploying the application is even easier; just run:
 
 ```
-$ now
+now
 ```
 
 ### Execute

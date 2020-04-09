@@ -23,8 +23,8 @@ def hello_there(request, name):
     return HttpResponse(content)
 
 def find_new_places(request):
-    # search_bayernheim()
-    # search_immobilienscout()
+    search_bayernheim()
+    search_immobilienscout()
     return HttpResponse("SUCCESS")
 
 def check_bayernheim(request):
