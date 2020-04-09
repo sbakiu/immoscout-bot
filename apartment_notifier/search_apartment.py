@@ -16,7 +16,7 @@ CHAT_ID = os.environ['CHAT_ID']
 
 BAYERNHEIM = "https://bayernheim.de/mieten/"
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # app = Flask(__name__)
@@ -66,6 +66,7 @@ def push_notification(text):
     bot.send_message(chat_id=CHAT_ID, text=text, parse_mode="Markdown")
 
 def search_immobilienscout():
+    logger.info("Searching Immoscout")
     IMMO_SEARCH_URL = os.environ['IMMO_SEARCH_URL']
     apartments = requests.post(IMMO_SEARCH_URL).json()['searchResponseModel']['resultlist.resultlist']['resultlistEntries'][0]['resultlistEntry']
     
@@ -109,7 +110,7 @@ def search_immobilienscout():
     }
 
 def search_bayernheim():
-    logger.debug("Received Request BayernHeim")
+    logger.info("Searching Bayernheim")
 
     mieten = requests.get(BAYERNHEIM)
     # soup = BeautifulSoup(mieten.text, features="html.parser")
