@@ -12,11 +12,11 @@ The application is built to be hosted free and using the free plan of variaty of
 - [Telegram](https://www.telegram.org/) - Cross-platform messaging application for instant notifications. Used to receive push notifications.
 
 Suggested, but not required:
-- [Freshping](https://www.freshworks.com/website-monitoring/) - Website monitoring service. Use this to keep an eye if the service fails, moreover it serves as an easy scheduling service. 
+- [UptimeRobot](https://uptimerobot.com) - Website monitoring service. Use this to keep an eye if the service fails, moreover it serves as an easy scheduling service. 
 
 ## Set up
 
-If you are registered in Heroku, Telegram (and Freshping), you can start setting up the application and try to deploy it.
+If you are registered in Heroku, Telegram (and UptimeRobot), you can start setting up the application and try to deploy it.
 
 ### Install Heroku CLI
 
@@ -116,4 +116,4 @@ now
 ### Execute
 
 The application offers a single GET endpoint `/findplaces`. It returns the unseen apartments as a json, but it also sends a notification for each of them via Telegram.
-On this same endpoint you can set up a regular execution as well. You can use [Freshping](https://www.freshworks.com/website-monitoring/) for this purpose.
+On this same endpoint you can set up a regular execution as well. You can use [UptimeRobot](https://uptimerobot.com) for this purpose.
