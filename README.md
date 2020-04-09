@@ -107,11 +107,7 @@ If you are interested only in the public companies please read and modify lines 
 
 ### Deploy
 
-Deploying the application is even easier; just run:
-
-```
-now
-```
+Deploying the application can be invoked in every git push, with GitHub Integration.
 
 ### Execute
 
