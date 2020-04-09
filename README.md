@@ -20,14 +20,15 @@ If you are registered in Heroku, Telegram (and UptimeRobot), you can start setti
 
 ### Install Heroku CLI
 
-First install on your local machine and login to [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+First install on your local machine and login to [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli). Afterwards, we need to make the selected application name available as an environment variable:
+
 ```
 export APP_NAME=<YOUR_HEROKU_APP_NAME>
 ```
 
 ### Set up database
 
-Create a free accout at [Mongo Cloud](https://www.mongodb.com/cloud) and set up a user for accessing the database.
+Create a free accout at [Mongo Cloud](https://www.mongodb.com/cloud) and set up a user for accessing the database. Provide the database credentians and names as env vars:
 
 ```
 export DB_USERNAME=<YOUR_DB_USERNAME>
@@ -38,8 +39,8 @@ export COLLECTION_NAME=<YOUR_COLLECTION_NAME>
 
 ### Store API secrets for deployment in Zeit
 
-In order to not share our secrets with the world, we are going to utilize Zeit's secret injection feature.
-Zeit has a secret storage, which during deployment it can use to fill up environment variables (see references in `now.json`)
+In order to not share our secrets with the world, we are going to utilize Heroku's secret injection feature.
+It provies a secret storage, which during deployment it can use to fill up environment variables.
 
 
 ### Telegram chat bot
