@@ -103,8 +103,6 @@ heroku config:set -a $APP_NAME IMMO_SEARCH_URL=<IMMOSEARCH_URL>
 
 Feel free to go crazy with search criterias, you just need to update the variable.
 
-If you are interested only in the public companies please read and modify lines 52-57 of the index.py file.
-
 ### Deploy
 
 Deploying the application can be invoked in every git push, with GitHub Integration.
