@@ -3,3 +3,4 @@ lauch.json
 __pycache__/*
 .now
 setup.sh
+**/__pycache__/*
