@@ -73,7 +73,7 @@ def search_immobilienscout():
     unseen_apartments = []
     seen_apartments = get_all_hashes_in_database()
 
-    public_companies = ["GWG", "GEWOFAG"]
+    # public_companies = ["GWG", "GEWOFAG"]
 
     if not type(apartments) is list:
         apartments = [apartments]

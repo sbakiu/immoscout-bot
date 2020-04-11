@@ -4,3 +4,4 @@ __pycache__/*
 .now
 setup.sh
 **/__pycache__/*
+.venv
