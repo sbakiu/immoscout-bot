@@ -23,5 +23,4 @@ urlpatterns = [
     path('checkBayernheim', views.check_bayernheim),
     path('checkimmobilienscout', views.check_immoscout),
     path("hello", views.hello_there),
-    path("", views.hello_there),
 ]
