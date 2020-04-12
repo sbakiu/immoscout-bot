@@ -22,5 +22,6 @@ urlpatterns = [
     path('findplaces', views.find_new_places),
     path('checkBayernheim', views.check_bayernheim),
     path('checkimmobilienscout', views.check_immoscout),
-    path("hello", views.hello_there, name="hello_there"),
+    path("hello", views.hello_there),
+    path("", views.hello_there),
 ]
