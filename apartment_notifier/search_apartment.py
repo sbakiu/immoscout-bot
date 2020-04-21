@@ -68,7 +68,11 @@ def push_notification(text):
 def search_immobilienscout():
     logger.info("Searching Immoscout")
     IMMO_SEARCH_URL = os.environ['IMMO_SEARCH_URL']
-    apartments = requests.post(IMMO_SEARCH_URL).json()['searchResponseModel']['resultlist.resultlist']['resultlistEntries'][0]['resultlistEntry']
+    try:
+        apartments = requests.post(IMMO_SEARCH_URL).json()['searchResponseModel']['resultlist.resultlist']['resultlistEntries'][0]['resultlistEntry']
+    except:
+        logger.warn("Could not read any listed appartement")
+        apartments = []
     
     unseen_apartments = []
     seen_apartments = get_all_hashes_in_database()
