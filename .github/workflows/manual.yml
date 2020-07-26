@@ -1,0 +1,19 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+on:
+  schedule:
+  - cron: "*/10 7-21 * * *"
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+jobs:
+  poll_job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Poll_job
+      uses: satak/webrequest-action@master
+      with:
+        url: ${{ secrets.WEBHOOK_URL }}
+        method: GET

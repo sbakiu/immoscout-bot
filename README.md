@@ -12,7 +12,7 @@ The application is built to be hosted free and using the free plan of variaty of
 - [Telegram](https://www.telegram.org/) - Cross-platform messaging application for instant notifications. Used to receive push notifications.
 
 Suggested, but not required:
-- [UptimeRobot](https://uptimerobot.com) - Website monitoring service. Use this to keep an eye if the service fails, moreover it serves as an easy scheduling service. 
+- [Github Actions](https://github.com/features/actions) - Use this to trigger the app based on a defined schedule
 
 ## Set up
 
@@ -111,4 +111,4 @@ Deploying the application can be invoked in every git push, with GitHub Integrat
 ### Execute
 
 The application offers a single GET endpoint `/findplaces`. It returns the unseen apartments as a json, but it also sends a notification for each of them via Telegram.
-On this same endpoint you can set up a regular execution as well. You can use [UptimeRobot](https://uptimerobot.com) for this purpose.
+On this same endpoint you can set up a regular execution as well.
