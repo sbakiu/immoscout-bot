@@ -10,14 +10,26 @@ def hello_there(request):
     return HttpResponse("HELLO")
 
 def find_new_places(request):
-    search_bayernheim()
-    search_immobilienscout()
-    return HttpResponse("SUCCESS")
+    q = request.get('q', None)
+    if not q:
+       return HttpResponse("No q")
+    else:
+        search_bayernheim(q)
+        search_immobilienscout(q)
+        return HttpResponse("SUCCESS")
 
 def check_bayernheim(request):
-    search_bayernheim()
-    return HttpResponse("SUCCESS")
+    q = request.get('q', None)
+    if not q:
+       return HttpResponse("No q")
+    else:
+        search_bayernheim(q)
+        return HttpResponse("SUCCESS")
 
 def check_immoscout(request):
-    search_immobilienscout()
-    return HttpResponse("SUCCESS")
+    q = request.get('q', None)
+    if not q:
+       return HttpResponse("No q")
+    else:
+        search_immobilienscout(q)
+        return HttpResponse("SUCCESS")

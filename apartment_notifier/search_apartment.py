@@ -13,6 +13,7 @@ COLLECTION_NAME = os.environ["COLLECTION_NAME"]
 
 BOT_TOKEN = os.environ['BOT_TOKEN']
 CHAT_ID = os.environ['CHAT_ID']
+SECRET = os.environ['SECRET']
 
 BAYERNHEIM = "https://bayernheim.de/mieten/"
 
@@ -65,76 +66,89 @@ def get_immoscout_data(apartment):
 def push_notification(text):
     bot.send_message(chat_id=CHAT_ID, text=text, parse_mode="Markdown")
 
-def search_immobilienscout():
-    logger.info("Searching Immoscout")
-    IMMO_SEARCH_URL = os.environ['IMMO_SEARCH_URL']
-    try:
-        apartments = requests.post(IMMO_SEARCH_URL).json()['searchResponseModel']['resultlist.resultlist']['resultlistEntries'][0]['resultlistEntry']
-    except:
-        logger.warn("Could not read any listed appartement")
-        apartments = []
-    
-    unseen_apartments = []
-    seen_apartments = get_all_hashes_in_database()
-
-    # public_companies = ["GWG", "GEWOFAG"]
-
-    if not type(apartments) is list:
-        apartments = [apartments]
-
-    for apartment in apartments:
-        # hash_id = sha3_512(apartment['@id'].encode('utf-8')).hexdigest()
-        hash_obj = {"hash": apartment['@id']}
-        if not apartment['@id'] in seen_apartments:
-            unseen_apartments.append(apartment)
-            seen_apartments.append(hash_obj)
-
-    for unseen_apartment in unseen_apartments:
-        apartment = unseen_apartment['resultlist.realEstate']
-        text = get_immoscout_data(apartment)
+def search_immobilienscout(q):
+    if verify_secret(q):
+        logger.info("Searching Immoscout")
+        IMMO_SEARCH_URL = os.environ['IMMO_SEARCH_URL']
+        try:
+            apartments = requests.post(IMMO_SEARCH_URL).json()['searchResponseModel']['resultlist.resultlist']['resultlistEntries'][0]['resultlistEntry']
+        except:
+            logger.warn("Could not read any listed appartement")
+            apartments = []
         
-        # If you are interested only in public companies uncomment the next 2 line.
-        # is_public = False
-        
-        # if 'realtorCompanyName' in apartment:
-        #     company = apartment['realtorCompanyName'].upper()
-        #     for c in public_companies:
-        #         if company.find(c) != -1:
-        #             is_public = True
-        
-        # if is_public:
-            # push_notification(data)
-        
-        # If you are interested only in public companies comment out the next line.
-        push_notification(text)
-        add_to_database({"hash": apartment['@id']})
+        unseen_apartments = []
+        seen_apartments = get_all_hashes_in_database()
 
-    return {
-        'status' : 'SUCCESS'
-    }
+        # public_companies = ["GWG", "GEWOFAG"]
 
-def search_bayernheim():
-    logger.info("Searching Bayernheim")
+        if not type(apartments) is list:
+            apartments = [apartments]
 
-    mieten = requests.get(BAYERNHEIM)
-    # soup = BeautifulSoup(mieten.text, features="html.parser")
-    hash_sha3_512 = sha3_512(mieten.text.encode('utf-8')).hexdigest()
-    hash_obj = {"hash": hash_sha3_512}
-    should_notify = False
+        for apartment in apartments:
+            # hash_id = sha3_512(apartment['@id'].encode('utf-8')).hexdigest()
+            hash_obj = {"hash": apartment['@id']}
+            if not apartment['@id'] in seen_apartments:
+                unseen_apartments.append(apartment)
+                seen_apartments.append(hash_obj)
 
-    # check if hash exists in db
-    db_obj = check_if_exists_in_database(hash_obj)
-    if db_obj is None:
-        should_notify = True
+        for unseen_apartment in unseen_apartments:
+            apartment = unseen_apartment['resultlist.realEstate']
+            text = get_immoscout_data(apartment)
+            
+            # If you are interested only in public companies uncomment the next 2 line.
+            # is_public = False
+            
+            # if 'realtorCompanyName' in apartment:
+            #     company = apartment['realtorCompanyName'].upper()
+            #     for c in public_companies:
+            #         if company.find(c) != -1:
+            #             is_public = True
+            
+            # if is_public:
+                # push_notification(data)
+            
+            # If you are interested only in public companies comment out the next line.
+            push_notification(text)
+            add_to_database({"hash": apartment['@id']})
 
-    if should_notify:
-        logger.debug("Sending Notification")
-        add_to_database(hash_obj)
-        data = get_bayernheim_data()
-        push_notification(data)
+        return {
+            'status' : 'SUCCESS'
+        }
     else:
-        logger.debug("Not Sending Notification")
-    
-    return {
-        'status' : 'SUCCESS'
-    }
+        return {
+            'status' : 'SUCCESS'
+        }
+
+def search_bayernheim(q):
+    if verify_secret(q):
+        logger.info("Searching Bayernheim")
+
+        mieten = requests.get(BAYERNHEIM)
+        # soup = BeautifulSoup(mieten.text, features="html.parser")
+        hash_sha3_512 = sha3_512(mieten.text.encode('utf-8')).hexdigest()
+        hash_obj = {"hash": hash_sha3_512}
+        should_notify = False
+
+        # check if hash exists in db
+        db_obj = check_if_exists_in_database(hash_obj)
+        if db_obj is None:
+            should_notify = True
+
+        if should_notify:
+            logger.debug("Sending Notification")
+            add_to_database(hash_obj)
+            data = get_bayernheim_data()
+            push_notification(data)
+        else:
+            logger.debug("Not Sending Notification")
+        
+        return {
+            'status' : 'SUCCESS'
+        }
+    else:
+        return {
+            'status' : 'SUCCESS'
+        }
+
+def verify_secret(q):
+    return q == SECRET
