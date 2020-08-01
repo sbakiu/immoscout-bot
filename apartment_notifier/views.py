@@ -10,7 +10,7 @@ def hello_there(request):
     return HttpResponse("HELLO")
 
 def find_new_places(request):
-    q = request.get('q', None)
+    q = request.GET.get('q', None)
     if not q:
        return HttpResponse("No q")
     else:
@@ -19,7 +19,7 @@ def find_new_places(request):
         return HttpResponse("SUCCESS")
 
 def check_bayernheim(request):
-    q = request.get('q', None)
+    q = request.GET.get('q', None)
     if not q:
        return HttpResponse("No q")
     else:
@@ -27,7 +27,7 @@ def check_bayernheim(request):
         return HttpResponse("SUCCESS")
 
 def check_immoscout(request):
-    q = request.get('q', None)
+    q = request.GET.get('q', None)
     if not q:
        return HttpResponse("No q")
     else:
