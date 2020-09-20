@@ -5,6 +5,7 @@ import logging
 from hashlib import sha3_512
 from pymongo import MongoClient
 import telegram
+import re
 
 DB_NAME = os.environ["DB_NAME"]
 DB_USERNAME = os.environ["DB_USERNAME"]
@@ -60,7 +61,11 @@ def get_bayernheim_data():
     return "Changes in BayernHeim"
 
 def get_immoscout_data(apartment):
-    text = f"Apartment: {apartment['title']} - Address: {apartment['address']['description']['text']} - Size:{apartment['livingSpace']} m2 - Price (warm): {apartment['calculatedPrice']['value']} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
+    title = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['title'])
+    address = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['address']['description']['text'])
+    size = apartment['livingSpace']
+    price_warm = apartment['calculatedPrice']['value']
+    text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
     return text
 
 def push_notification(text):
