@@ -69,7 +69,6 @@ def get_immoscout_data(apartment):
     return text
 
 def push_notification(text):
-    logger.info(f"text: {text}")
     bot.send_message(chat_id=CHAT_ID, text=text, parse_mode="Markdown")
 
 def search_immobilienscout(q):
