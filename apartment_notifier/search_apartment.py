@@ -61,7 +61,7 @@ def get_bayernheim_data():
     return "Changes in BayernHeim"
 
 def get_immoscout_data(apartment):
-    logging.info("Apartment: " + apartment)
+    logging.info("Apartment: " + str(apartment))
     title = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['title'])
     address = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['address']['description']['text'])
     size = apartment['livingSpace']
