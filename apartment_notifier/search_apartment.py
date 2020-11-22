@@ -61,13 +61,17 @@ def get_bayernheim_data():
     return "Changes in BayernHeim"
 
 def get_immoscout_data(apartment):
-    logging.info("Apartment: " + str(apartment))
     title = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['title'])
     address = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['address']['description']['text'])
     size = apartment['livingSpace']
     try:
         price_warm = apartment['calculatedPrice']['value']
     except:
+        try:
+            price_warm = apartment['calculatedTotalRent']['totalRent']['value']
+        except:
+            logging.info("Error with Apartment: " + str(apartment))
+    finally:
         price_warm = "NONE"
     text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
     return text
