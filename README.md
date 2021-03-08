@@ -58,13 +58,20 @@ Write a couple of dummy messages to the bot you just created and run this comman
 $ curl https://api.telegram.org/bot<YourBOTToken>/getUpdates
 ```
 
-Look for the "chat" object in the message you will get. It is something along the lines:
+Look for the `chat` object in the message you will get. It is something along the lines:
 ```
-{"update_id":8393,
-"message":{"message_id":3,"from":{"id":7474,"first_name":"AAA"},
-"chat":{"id":,"title":""},
-"date":25497,
-"new_chat_participant":{"id":71,"first_name":"NAME","username":"YOUR_BOT_NAME"}}}
+{
+    "update_id":8393,
+    "message":{
+        "message_id":3,
+        "from":{"id":7474,"first_name":"AAA"},
+        "chat":{"id":,"title":""},
+        "date":25497,
+        "new_chat_participant":{
+            "id":71,"first_name":"NAME","username":"YOUR_BOT_NAME"
+        }
+    }
+}
 ```
 After you have found the chat id, export it:
 ```
