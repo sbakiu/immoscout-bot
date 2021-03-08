@@ -58,7 +58,7 @@ def get_all_hashes_in_database():
     return hashes_in_db
 
 def get_bayernheim_data():
-    return "Changes in BayernHeim"
+    return f"Changes in BayernHeim: {BAYERNHEIM}"
 
 def get_immoscout_data(apartment):
     title = re.sub('[^a-zA-Z0-9.\d\s]+', '', apartment['title'])
