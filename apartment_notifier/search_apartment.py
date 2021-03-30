@@ -28,8 +28,7 @@ bot = telegram.Bot(token=BOT_TOKEN)
 
 def get_db_collection():
     client = MongoClient(
-        "mongodb+srv://%s:%s@cluster0-6gkyq.mongodb.net/test?retryWrites=true&w=majority&ssl_cert_reqs=CERT_NONE"
-        % (DB_USERNAME, DB_PASSWORD)
+        f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0-6gkyq.mongodb.net/test?retryWrites=true&w=majority&ssl_cert_reqs=CERT_NONE"
     )
     db = client[DB_NAME]
     hashes = db[COLLECTION_NAME]
@@ -83,7 +82,7 @@ def get_immoscout_data(apartment):
         try:
             price_warm = apartment["calculatedTotalRent"]["totalRent"]["value"]
         except:
-            logging.info("Error with Apartment: " + str(apartment))
+            logging.info(f"Error with Apartment: {str(apartment)} ")
 
     text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
     return text
