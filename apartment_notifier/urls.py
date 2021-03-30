@@ -19,8 +19,8 @@ from apartment_notifier import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('findplaces', views.find_new_places),
-    path('checkBayernheim', views.check_bayernheim),
-    path('checkimmobilienscout', views.check_immoscout),
+    path("findplaces", views.find_new_places),
+    path("checkBayernheim", views.check_bayernheim),
+    path("checkimmobilienscout", views.check_immoscout),
     path("hello", views.hello_there),
 ]
