@@ -139,9 +139,7 @@ def search_immobilienscout(q):
             push_notification(text)
             add_to_database({"hash": apartment["@id"]})
 
-        return {"status": "SUCCESS"}
-    else:
-        return {"status": "SUCCESS"}
+    return {"status": "SUCCESS"}
 
 
 def search_bayernheim(q):
@@ -167,9 +165,7 @@ def search_bayernheim(q):
         else:
             logger.debug("Not Sending Notification")
 
-        return {"status": "SUCCESS"}
-    else:
-        return {"status": "SUCCESS"}
+    return {"status": "SUCCESS"}
 
 
 def verify_secret(q):
