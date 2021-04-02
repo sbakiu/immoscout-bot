@@ -58,7 +58,7 @@ def check_if_exists_in_database(hash_obj):
 def get_all_hashes_in_database():
     hashes = get_db_collection()
 
-    db_objs = hashes.find().sort("_id", -1).limit(20)
+    db_objs = hashes.find().sort("_id", -1).limit(25)
     hashes_in_db = []
     for db_obj in db_objs:
         hashes_in_db.append(db_obj["hash"])
