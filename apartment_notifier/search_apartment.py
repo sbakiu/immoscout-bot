@@ -147,8 +147,9 @@ def search_bayernheim(q):
         logger.info("Searching Bayernheim.")
 
         mieten = requests.get(BAYERNHEIM)
+        mieten_text = mieten.text
         # soup = BeautifulSoup(mieten.text, features="html.parser")
-        hash_sha3_512 = sha3_512(mieten.text.encode("utf-8")).hexdigest()
+        hash_sha3_512 = sha3_512(mieten_text.encode("utf-8")).hexdigest()
         hash_obj = {"hash": hash_sha3_512}
         should_notify = False
 
