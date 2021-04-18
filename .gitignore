@@ -5,4 +5,5 @@ __pycache__/*
 setup.sh
 **/__pycache__/*
 .venv
+venv
 .idea/*
