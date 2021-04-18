@@ -144,7 +144,7 @@ def search_immobilienscout(q):
 
 def search_bayernheim(q):
     if verify_secret(q):
-        logger.info("Searching Bayernheim")
+        logger.info("Searching Bayernheim.")
 
         mieten = requests.get(BAYERNHEIM)
         # soup = BeautifulSoup(mieten.text, features="html.parser")

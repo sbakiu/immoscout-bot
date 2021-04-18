@@ -1,7 +1,7 @@
-requests
-pymongo==3.11.0
-dnspython==2.0.0
-python-telegram-bot==12.8
+requests==2.25.1
+pymongo==3.11.3
+dnspython==2.1.0
+python-telegram-bot==13.4.1
 django-heroku==0.3.1
-django==3.1.8
-gunicorn==20.0.4
+django==3.2
+gunicorn==20.1.0
