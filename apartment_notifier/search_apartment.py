@@ -1,12 +1,17 @@
-import requests
+from difflib import Differ
+import logging
 import os
+import re
+import requests
 
 # from flask import Flask, Response, __version__
-import logging
 from hashlib import sha3_512
+from pprint import pprint
+
 from pymongo import MongoClient
+
 import telegram
-import re
+
 
 DB_NAME = os.environ["DB_NAME"]
 DB_USERNAME = os.environ["DB_USERNAME"]
@@ -149,13 +154,21 @@ def search_bayernheim(q):
         mieten = requests.get(BAYERNHEIM)
         mieten_text = mieten.text
         # soup = BeautifulSoup(mieten.text, features="html.parser")
+
+        # d = Differ()
+        # result = list(d.compare(mieten_text, mieten_text))
+        # pprint(result)
+        
         hash_sha3_512 = sha3_512(mieten_text.encode("utf-8")).hexdigest()
         hash_obj = {"hash": hash_sha3_512}
+        logger.info(f"Calculated hash: {hash_sha3_512}")
         should_notify = False
 
         # check if hash exists in db
         db_obj = check_if_exists_in_database(hash_obj)
+        logger.info(f"Retrived hash from DB : {db_obj}")
         if db_obj is None:
+            logger.info("DB obj is none")
             should_notify = True
 
         if should_notify:
