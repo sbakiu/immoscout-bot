@@ -169,7 +169,7 @@ def search_bayernheim(q):
         logger.info(f"Retrived hash from DB : {db_obj}")
         if db_obj is None:
             logger.info("DB obj is none")
-            should_notify = True
+            should_notify = False
 
         if should_notify:
             logger.debug("Sending Notification")
