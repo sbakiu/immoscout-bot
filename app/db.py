@@ -11,6 +11,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def get_db_collection(collection_name: str):
+    """
+    Get MongoDB Collection
+    """
     client = MongoClient(
         f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0-6gkyq.mongodb.net/test?retryWrites=true&w=majority&ssl_cert_reqs=CERT_NONE"
     )
@@ -20,6 +23,9 @@ def get_db_collection(collection_name: str):
 
 
 def insert_to_database(hash_obj, collection_name):
+    """
+    Insert object to MongoDB Collection
+    """
     collection = get_db_collection(collection_name=collection_name)
 
     inserted_obj = collection.insert_one(hash_obj)
@@ -27,11 +33,17 @@ def insert_to_database(hash_obj, collection_name):
     logger.info(hash_id)
 
 
-def update_in_database(id, hash, collection_name):
+def update_in_database(obj_id, hash, collection_name):
+    """
+    Update object in collection
+    """
     collection = get_db_collection(collection_name=collection_name)
-    collection.update_one({'_id': id}, {'$set': hash})
+    collection.update_one({'_id': obj_id}, {'$set': hash})
 
 def find_in_database(hash_obj, collection_name):
+    """
+    Find object by hash value
+    """
     collection = get_db_collection(collection_name=collection_name)
 
     db_obj = collection.find_one(hash_obj)
@@ -39,6 +51,9 @@ def find_in_database(hash_obj, collection_name):
 
 
 def get_all_hashes_in_database(collection_name: str):
+    """
+    Get latest 25 objects in MongoDB collection
+    """
     collection = get_db_collection(collection_name=collection_name)
 
     db_objs = collection.find().sort("_id", -1).limit(25)

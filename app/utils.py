@@ -11,12 +11,14 @@ logger = logging.getLogger(__name__)
 
 def verify_secret(q, secret):
     """
+    Verify the supplied secret is the one the application expects
     """
     return q == secret
 
 
 def compare_bh_hashes(db_obj, hash_obj):
     """
+    Compare the web page hash with the one stored in database
     """
     if db_obj is None:
         logger.info("DB obj is none")
@@ -27,13 +29,10 @@ def compare_bh_hashes(db_obj, hash_obj):
     return db_hash != web_hash
 
 
-def push_notification(bot, chat_id, text):
-    """
-    """
-    bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")
-
-
 def get_bayernheim_hash(bayernheim_link):
+    """
+    Get BayernHeim page hash
+    """
     mieten = requests.get(bayernheim_link)
     mieten_text = mieten.text
 
@@ -43,14 +42,29 @@ def get_bayernheim_hash(bayernheim_link):
     return hash_obj
 
 
-def get_bayernheim_text(bayernheim_link):
+def process_bayernheim_update(bayernheim_link, db_obj, hash_obj, bayernheim_collection, bot, chat_id):
     """
+    Update database and send notification for BayernHeim update
+    """
+    db.update_in_database(db_obj["_id"], hash_obj, collection_name=bayernheim_collection)
+    text = prepare_bayernheim_text(bayernheim_link)
+    push_notification(
+        bot=bot,
+        chat_id=chat_id,
+        text=text
+    )
+
+
+def prepare_bayernheim_text(bayernheim_link):
+    """
+    Prepare text for BayernHeim notification
     """
     return f"Changes in BayernHeim: {bayernheim_link}"
 
 
 def get_immoscout_apartments(immo_search_url):
     """
+    Get apartments online from the url
     """
     apartments = []
 
@@ -70,6 +84,7 @@ def get_immoscout_apartments(immo_search_url):
 
 def filter_unseen_apartments(apartments, seen_apartments):
     """
+    Filter apartments not yet seen
     """
     unseen_apartments = []
 
@@ -84,11 +99,12 @@ def filter_unseen_apartments(apartments, seen_apartments):
 
 def process_unseen_apartments(unseen_apartments, bot, chat_id, immo_collection_name):
     """
+    Process all unseen apartments
     """
     # public_companies = ["GWG", "GEWOFAG"]
     for unseen_apartment in unseen_apartments:
         apartment = unseen_apartment["resultlist.realEstate"]
-        text = get_immoscout_notification_text(apartment)
+        text = prepare_apartment_notification_text(apartment)
 
         # If you are interested only in public companies uncomment the next 2 line.
         # is_public = False
@@ -107,8 +123,9 @@ def process_unseen_apartments(unseen_apartments, bot, chat_id, immo_collection_n
         push_notification(bot, chat_id, text)
 
 
-def get_immoscout_notification_text(apartment):
+def prepare_apartment_notification_text(apartment):
     """
+    Prepare notification text for the apartment
     """
     title = re.sub("[^a-zA-Z0-9.\d\s]+", "", apartment["title"])
     address = re.sub(
@@ -126,3 +143,10 @@ def get_immoscout_notification_text(apartment):
 
     text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
     return text
+
+
+def push_notification(bot, chat_id, text):
+    """
+    Push Telegram notification
+    """
+    bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")

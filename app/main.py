@@ -1,6 +1,5 @@
 import logging
 import os
-import requests
 
 from fastapi import FastAPI
 
@@ -43,17 +42,25 @@ def search_bayernheim(q: str = ""):
     if utils.verify_secret(q, SECRET):
         logger.info("Searching Bayernheim.")
 
+        # Get hash values for the BayernHeim page
         hash_obj = utils.get_bayernheim_hash(BAYERNHEIM)
 
+        # Get hash value stored in database
         db_obj = db.find_in_database(hash_obj, BH_COLLECTION_NAME)
 
+        # Check if notification should be sent
         should_notify = utils.compare_bh_hashes(db_obj, hash_obj)
 
         if should_notify:
-            logger.debug("Sending Notification")
-            db.update_in_database(db_obj["_id"], hash_obj, collection_name=BH_COLLECTION_NAME)
-            text = utils.get_bayernheim_text(BAYERNHEIM)
-            utils.push_notification(bot, CHAT_ID, text)
+            # Process BayernHeim page update
+            utils.process_bayernheim_update(
+                bayernheim_link=BAYERNHEIM,
+                db_obj=db_obj,
+                hash_obj=hash_obj,
+                bayernheim_collection=BH_COLLECTION_NAME,
+                bot=bot,
+                chat_id=CHAT_ID
+            )
         else:
             logger.debug("Not Sending Notification")
 
