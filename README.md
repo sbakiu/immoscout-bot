@@ -89,7 +89,7 @@ heroku config:set -a $APP_NAME DB_PASSWORD=$DB_PASSWORD
 heroku config:set -a $APP_NAME COLLECTION_NAME=$COLLECTION_NAME
 heroku config:set -a $APP_NAME BOT_TOKEN=$BOT_TOKEN
 heroku config:set -a $APP_NAME CHAT_ID=$CHAT_ID
-heroku config:set -a $APP_NAME SECRET_KEY=<SECRET_KEY>
+heroku config:set -a $APP_NAME SECRET=<SECRET>
 ```
 
 ## Customize and deploy
