@@ -4,7 +4,7 @@ import requests
 
 from hashlib import sha3_512
 
-import db
+import app.db as db
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

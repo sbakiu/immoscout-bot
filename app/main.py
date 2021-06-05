@@ -6,8 +6,8 @@ from fastapi import FastAPI
 
 from pymongo import MongoClient
 
-import db
-import utils
+import app.db as db
+import app.utils as utils
 
 import telegram
 
