@@ -1,16 +1,19 @@
-from difflib import Differ
 import logging
 import os
 import re
 import requests
+import uvicorn
 
 # from flask import Flask, Response, __version__
+from fastapi import FastAPI
 from hashlib import sha3_512
 from pprint import pprint
 
 from pymongo import MongoClient
 
 import telegram
+
+app = FastAPI()
 
 
 DB_NAME = os.environ["DB_NAME"]
@@ -22,6 +25,7 @@ BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 SECRET = os.environ["SECRET"]
 
+IMMO_SEARCH_URL = os.environ["IMMO_SEARCH_URL"]
 BAYERNHEIM = "https://bayernheim.de/mieten/"
 
 logging.basicConfig(level=logging.INFO)
@@ -96,11 +100,11 @@ def get_immoscout_data(apartment):
 def push_notification(text):
     bot.send_message(chat_id=CHAT_ID, text=text, parse_mode="Markdown")
 
-
-def search_immobilienscout(q):
+@app.get("/checkimmobilienscout")
+def search_immobilienscout(q: str=""):
     if verify_secret(q):
         logger.info("Searching Immoscout")
-        IMMO_SEARCH_URL = os.environ["IMMO_SEARCH_URL"]
+        # IMMO_SEARCH_URL = os.environ["IMMO_SEARCH_URL"]
         try:
             apartments = requests.post(IMMO_SEARCH_URL).json()["searchResponseModel"][
                 "resultlist.resultlist"
@@ -146,8 +150,8 @@ def search_immobilienscout(q):
 
     return {"status": "SUCCESS"}
 
-
-def search_bayernheim(q):
+@app.get("/checkBayernheim")
+def search_bayernheim(q: str=""):
     if verify_secret(q):
         logger.info("Searching Bayernheim.")
 
@@ -181,6 +185,14 @@ def search_bayernheim(q):
 
     return {"status": "SUCCESS"}
 
+@app.get("/findplaces")
+def find_new_places(q: str=""):
+    if not q:
+        return {"status": "FAILED"}
+    else:
+        search_bayernheim(q)
+        search_immobilienscout(q)
+        return {"status": "SUCCESS"}
 
 def verify_secret(q):
     return q == SECRET

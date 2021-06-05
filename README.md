@@ -83,9 +83,9 @@ If the response does not look like that write a couple of more messages to the b
 
 Finally, you can set up the configuration varialbes that will be injected as environment varilables to the application
 ```
+heroku config:set -a $APP_NAME DB_NAME=$DB_NAME
 heroku config:set -a $APP_NAME DB_USERNAME=$DB_USERNAME
 heroku config:set -a $APP_NAME DB_PASSWORD=$DB_PASSWORD
-heroku config:set -a $APP_NAME DB_NAME=$DB_NAME
 heroku config:set -a $APP_NAME COLLECTION_NAME=$COLLECTION_NAME
 heroku config:set -a $APP_NAME BOT_TOKEN=$BOT_TOKEN
 heroku config:set -a $APP_NAME CHAT_ID=$CHAT_ID
