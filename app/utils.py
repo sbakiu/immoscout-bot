@@ -71,7 +71,8 @@ def get_immoscout_apartments(immo_search_url):
     try:
         response_text = requests.post(immo_search_url)
         apartments_json = response_text.json()
-        apartments = apartments_json["searchResponseModel"]["resultlist.resultlist"]["resultlistEntries"][0]["resultlistEntry"]
+        apartments_resultlist = apartments_json["searchResponseModel"]["resultlist.resultlist"]
+        apartments = apartments_resultlist["resultlistEntries"][0]["resultlistEntry"]
     except Exception as e:
         logger.warn("Could not read any listed appartement")
         apartments = []
@@ -127,10 +128,9 @@ def prepare_apartment_notification_text(apartment):
     """
     Prepare notification text for the apartment
     """
-    title = re.sub("[^a-zA-Z0-9.\d\s]+", "", apartment["title"])
-    address = re.sub(
-        "[^a-zA-Z0-9.\d\s]+", "", apartment["address"]["description"]["text"]
-    )
+    title_reg_ex = "[^a-zA-Z0-9.\d\s]+"
+    title = re.sub(title_reg_ex, "", apartment["title"])
+    address = re.sub(title_reg_ex, "", apartment["address"]["description"]["text"])
     size = apartment["livingSpace"]
     price_warm = "NONE"
     try:
@@ -141,7 +141,7 @@ def prepare_apartment_notification_text(apartment):
         except Exception as e:
             logger.info(f"Error with Apartment: {str(apartment)} ")
 
-    text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
+    text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"  # no E501
     return text
 
 
