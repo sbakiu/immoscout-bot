@@ -128,10 +128,22 @@ def prepare_apartment_notification_text(apartment):
     """
     Prepare notification text for the apartment
     """
-    title_reg_ex = "[^a-zA-Z0-9.\d\s]+"
+    title_reg_ex = r'[^a-zA-Z0-9.\d\s]+'
     title = re.sub(title_reg_ex, "", apartment["title"])
     address = re.sub(title_reg_ex, "", apartment["address"]["description"]["text"])
     size = apartment["livingSpace"]
+    price_warm = get_price_from_text(apartment=apartment)
+
+    announcement_link = f"https://www.immobilienscout24.de/expose/{apartment['@id']}"
+    text_title = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR - "
+    text_with_link = text_title + f" - [{announcement_link}]({announcement_link})"
+    return text_with_link
+
+
+def get_price_from_text(apartment):
+    """
+    Get price value from apartment text
+    """
     price_warm = "NONE"
     try:
         price_warm = apartment["calculatedPrice"]["value"]
@@ -141,9 +153,7 @@ def prepare_apartment_notification_text(apartment):
         except Exception as e:
             logger.info(f"Error with Apartment: {str(apartment)} ")
 
-    text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"  # no E501
-    return text
-
+    return price_warm
 
 def push_notification(bot, chat_id, text):
     """
