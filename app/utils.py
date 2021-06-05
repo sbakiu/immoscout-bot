@@ -155,6 +155,7 @@ def get_price_from_text(apartment):
 
     return price_warm
 
+
 def push_notification(bot, chat_id, text):
     """
     Push Telegram notification
