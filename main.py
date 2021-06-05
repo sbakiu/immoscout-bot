@@ -1,22 +1,18 @@
 import logging
 import os
-import re
 import requests
 
 from fastapi import FastAPI
-from hashlib import sha3_512
 
 from pymongo import MongoClient
 
+import db
+import utils
+
 import telegram
 
-app = FastAPI()
-
-
-DB_NAME = os.environ["DB_NAME"]
-DB_USERNAME = os.environ["DB_USERNAME"]
-DB_PASSWORD = os.environ["DB_PASSWORD"]
-COLLECTION_NAME = os.environ["COLLECTION_NAME"]
+BH_COLLECTION_NAME = os.environ["BH_COLLECTION_NAME"]
+IMMO_COLLECTION_NAME = os.environ["IMMO_COLLECTION_NAME"]
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
@@ -28,164 +24,12 @@ BAYERNHEIM = "https://bayernheim.de/mieten/"
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# app = Flask(__name__)
 bot = telegram.Bot(token=BOT_TOKEN)
-
-
-def get_db_collection():
-    client = MongoClient(
-        f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0-6gkyq.mongodb.net/test?retryWrites=true&w=majority&ssl_cert_reqs=CERT_NONE"
-    )
-    db = client[DB_NAME]
-    hashes = db[COLLECTION_NAME]
-    return hashes
-
-
-def add_to_database(hash_obj):
-    hashes = get_db_collection()
-
-    hash_id = hashes.insert_one(hash_obj).inserted_id
-    logger.info(hash_id)
-
-
-def add_many_to_database(hash_objs):
-    hashes = get_db_collection()
-
-    hashes.insert_many(hash_objs)
-
-
-def check_if_exists_in_database(hash_obj):
-    hashes = get_db_collection()
-
-    db_obj = hashes.find_one(hash_obj)
-    return db_obj
-
-
-def get_all_hashes_in_database():
-    hashes = get_db_collection()
-
-    db_objs = hashes.find().sort("_id", -1).limit(25)
-    hashes_in_db = []
-    for db_obj in db_objs:
-        hashes_in_db.append(db_obj["hash"])
-    return hashes_in_db
-
-
-def get_bayernheim_data():
-    return f"Changes in BayernHeim: {BAYERNHEIM}"
-
-
-def get_immoscout_data(apartment):
-    title = re.sub("[^a-zA-Z0-9.\d\s]+", "", apartment["title"])
-    address = re.sub(
-        "[^a-zA-Z0-9.\d\s]+", "", apartment["address"]["description"]["text"]
-    )
-    size = apartment["livingSpace"]
-    price_warm = "NONE"
-    try:
-        price_warm = apartment["calculatedPrice"]["value"]
-    except:
-        try:
-            price_warm = apartment["calculatedTotalRent"]["totalRent"]["value"]
-        except:
-            logging.info(f"Error with Apartment: {str(apartment)} ")
-
-    text = f"Apartment: {title} - Address: {address} - Size:{size} m2 - Price (warm): {price_warm} EUR -  - [https://www.immobilienscout24.de/expose/{apartment['@id']}](https://www.immobilienscout24.de/expose/{apartment['@id']})"
-    return text
-
-
-def push_notification(text):
-    bot.send_message(chat_id=CHAT_ID, text=text, parse_mode="Markdown")
-
-@app.get("/checkimmobilienscout")
-def search_immobilienscout(q: str=""):
-    if verify_secret(q):
-        logger.info("Searching Immoscout")
-        # IMMO_SEARCH_URL = os.environ["IMMO_SEARCH_URL"]
-        try:
-            apartments = requests.post(IMMO_SEARCH_URL).json()["searchResponseModel"][
-                "resultlist.resultlist"
-            ]["resultlistEntries"][0]["resultlistEntry"]
-        except:
-            logger.warn("Could not read any listed appartement")
-            apartments = []
-
-        unseen_apartments = []
-        seen_apartments = get_all_hashes_in_database()
-
-        # public_companies = ["GWG", "GEWOFAG"]
-
-        if not type(apartments) is list:
-            apartments = [apartments]
-
-        for apartment in apartments:
-            # hash_id = sha3_512(apartment['@id'].encode('utf-8')).hexdigest()
-            hash_obj = {"hash": apartment["@id"]}
-            if not apartment["@id"] in seen_apartments:
-                unseen_apartments.append(apartment)
-                seen_apartments.append(hash_obj)
-
-        for unseen_apartment in unseen_apartments:
-            apartment = unseen_apartment["resultlist.realEstate"]
-            text = get_immoscout_data(apartment)
-
-            # If you are interested only in public companies uncomment the next 2 line.
-            # is_public = False
-
-            # if 'realtorCompanyName' in apartment:
-            #     company = apartment['realtorCompanyName'].upper()
-            #     for c in public_companies:
-            #         if company.find(c) != -1:
-            #             is_public = True
-
-            # if is_public:
-            # push_notification(data)
-
-            # If you are interested only in public companies comment out the next line.
-            push_notification(text)
-            add_to_database({"hash": apartment["@id"]})
-
-    return {"status": "SUCCESS"}
-
-
-@app.get("/checkBayernheim")
-def search_bayernheim(q: str=""):
-    if verify_secret(q):
-        logger.info("Searching Bayernheim.")
-
-        mieten = requests.get(BAYERNHEIM)
-        mieten_text = mieten.text
-        # soup = BeautifulSoup(mieten.text, features="html.parser")
-
-        # d = Differ()
-        # result = list(d.compare(mieten_text, mieten_text))
-        # pprint(result)
-    
-        hash_sha3_512 = sha3_512(mieten_text.encode("utf-8")).hexdigest()
-        hash_obj = {"hash": hash_sha3_512}
-        logger.info(f"Calculated hash: {hash_sha3_512}")
-        should_notify = False
-
-        # check if hash exists in db
-        db_obj = check_if_exists_in_database(hash_obj)
-        logger.info(f"Retrived hash from DB : {db_obj}")
-        if db_obj is None:
-            logger.info("DB obj is none")
-            should_notify = False
-
-        if should_notify:
-            logger.debug("Sending Notification")
-            add_to_database(hash_obj)
-            data = get_bayernheim_data()
-            push_notification(data)
-        else:
-            logger.debug("Not Sending Notification")
-
-    return {"status": "SUCCESS"}
+app = FastAPI()
 
 
 @app.get("/findplaces")
-def find_new_places(q: str=""):
+def find_new_places(q: str = ""):
     if not q:
         return {"status": "FAILED"}
     else:
@@ -194,5 +38,49 @@ def find_new_places(q: str=""):
         return {"status": "SUCCESS"}
 
 
-def verify_secret(q):
-    return q == SECRET
+@app.get("/checkBayernheim")
+def search_bayernheim(q: str = ""):
+    if utils.verify_secret(q, SECRET):
+        logger.info("Searching Bayernheim.")
+
+        hash_obj = utils.get_bayernheim_hash(BAYERNHEIM)
+
+        db_obj = db.find_in_database(hash_obj, BH_COLLECTION_NAME)
+
+        should_notify = utils.compare_bh_hashes(db_obj, hash_obj)
+
+        if should_notify:
+            logger.debug("Sending Notification")
+            db.update_in_database(db_obj["_id"], hash_obj, collection_name=BH_COLLECTION_NAME)
+            text = utils.get_bayernheim_text(BAYERNHEIM)
+            utils.push_notification(bot, CHAT_ID, text)
+        else:
+            logger.debug("Not Sending Notification")
+
+    return {"status": "SUCCESS"}
+
+
+@app.get("/checkimmobilienscout")
+def search_immobilienscout(q: str = ""):
+    if utils.verify_secret(q, SECRET):
+        logger.info("Searching Immoscout")
+
+        # Get apartments in Immoscout
+        apartments = utils.get_immoscout_apartments(immo_search_url=IMMO_SEARCH_URL)
+
+        # Get already seen apartments from DB
+        seen_apartments = db.get_all_hashes_in_database(IMMO_COLLECTION_NAME)
+
+        # Filter unseen apartments
+        unseen_apartments = utils.filter_unseen_apartments(apartments, seen_apartments)
+
+        # Process new apartments
+        if unseen_apartments:
+            utils.process_unseen_apartments(
+                unseen_apartments=unseen_apartments,
+                bot=bot,
+                chat_id=CHAT_ID,
+                immo_collection_name=IMMO_COLLECTION_NAME
+            )
+
+    return {"status": "SUCCESS"}

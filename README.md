@@ -34,7 +34,8 @@ Create a free accout at [Mongo Cloud](https://www.mongodb.com/cloud) and set up 
 export DB_USERNAME=<YOUR_DB_USERNAME>
 export DB_PASSWORD=<YOUR_DB_PASSEWORD>
 export DB_NAME=<YOUR_DB_NAME>
-export COLLECTION_NAME=<YOUR_COLLECTION_NAME>
+export BH_COLLECTION_NAME=<YOUR_BH_COLLECTION_NAME>
+export IMMO_COLLECTION_NAME=<YOUR_IMMO_COLLECTION_NAME>
 ```
 
 ### Store API secrets for deployment in Zeit
@@ -86,7 +87,8 @@ Finally, you can set up the configuration varialbes that will be injected as env
 heroku config:set -a $APP_NAME DB_NAME=$DB_NAME
 heroku config:set -a $APP_NAME DB_USERNAME=$DB_USERNAME
 heroku config:set -a $APP_NAME DB_PASSWORD=$DB_PASSWORD
-heroku config:set -a $APP_NAME COLLECTION_NAME=$COLLECTION_NAME
+heroku config:set -a $APP_NAME BH_COLLECTION_NAME=$BH_COLLECTION_NAME
+heroku config:set -a $APP_NAME IMMO_COLLECTION_NAME=$IMMO_COLLECTION_NAME
 heroku config:set -a $APP_NAME BOT_TOKEN=$BOT_TOKEN
 heroku config:set -a $APP_NAME CHAT_ID=$CHAT_ID
 heroku config:set -a $APP_NAME SECRET=<SECRET>
