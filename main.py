@@ -7,7 +7,6 @@ import uvicorn
 # from flask import Flask, Response, __version__
 from fastapi import FastAPI
 from hashlib import sha3_512
-from pprint import pprint
 
 from pymongo import MongoClient
 
@@ -150,6 +149,7 @@ def search_immobilienscout(q: str=""):
 
     return {"status": "SUCCESS"}
 
+
 @app.get("/checkBayernheim")
 def search_bayernheim(q: str=""):
     if verify_secret(q):
@@ -162,7 +162,7 @@ def search_bayernheim(q: str=""):
         # d = Differ()
         # result = list(d.compare(mieten_text, mieten_text))
         # pprint(result)
-        
+    
         hash_sha3_512 = sha3_512(mieten_text.encode("utf-8")).hexdigest()
         hash_obj = {"hash": hash_sha3_512}
         logger.info(f"Calculated hash: {hash_sha3_512}")
