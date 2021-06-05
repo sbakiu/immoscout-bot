@@ -2,9 +2,7 @@ import logging
 import os
 import re
 import requests
-import uvicorn
 
-# from flask import Flask, Response, __version__
 from fastapi import FastAPI
 from hashlib import sha3_512
 
@@ -185,6 +183,7 @@ def search_bayernheim(q: str=""):
 
     return {"status": "SUCCESS"}
 
+
 @app.get("/findplaces")
 def find_new_places(q: str=""):
     if not q:
@@ -193,6 +192,7 @@ def find_new_places(q: str=""):
         search_bayernheim(q)
         search_immobilienscout(q)
         return {"status": "SUCCESS"}
+
 
 def verify_secret(q):
     return q == SECRET
