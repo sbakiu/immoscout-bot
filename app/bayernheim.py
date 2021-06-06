@@ -18,6 +18,9 @@ class BayernHeim(object):
     URL = "https://bayernheim.de/mieten/"
 
     def __init__(self):
+        """
+        Empty method. Might be filled later
+        """
         pass
 
     def check_for_changes(self):

@@ -15,6 +15,9 @@ class ImmoScout(object):
     URL = os.environ["IMMO_SEARCH_URL"]
 
     def __init__(self):
+        """
+        Empty method. Might be filled later
+        """
         pass
 
     def check_for_new_announcements(self):
@@ -115,6 +118,7 @@ class ImmoScout(object):
             # If you are interested only in public companies uncomment the next 2 line.
             # is_public = False
 
+            # If you are interested only in public companies comment out the following lines.
             # if 'realtorCompanyName' in apartment:
             #     company = apartment['realtorCompanyName'].upper()
             #     for c in public_companies:
@@ -122,9 +126,7 @@ class ImmoScout(object):
             #             is_public = True
 
             # if is_public:
-            # push_notification(data)
 
-            # If you are interested only in public companies comment out the next line.
             db.insert_to_database({"hash": apartment["@id"]}, collection_name=ImmoScout.COLLECTION_NAME)
             bot = Bot()
             bot.push_notification(text=text)
