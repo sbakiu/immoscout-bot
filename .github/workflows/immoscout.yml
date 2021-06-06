@@ -15,5 +15,5 @@ jobs:
     - name: Poll_job
       uses: satak/webrequest-action@master
       with:
-        url: ${{ secrets.WEBHOOK_URL }}
+        url: ${{ secrets.IMMO_SCOUT_URL }}
         method: GET
