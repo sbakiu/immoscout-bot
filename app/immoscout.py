@@ -17,25 +17,36 @@ class ImmoScout(object):
     def __init__(self):
         pass
 
+    def check_immoscout_for_new_announcements(self):
+        # Get active announcements in ImmoScout
+        self.get_immoscout_active_announcements()
+
+        # Get already seen announcements from DB
+        self.get_already_seen_announcements()
+
+        # Filter unseen announcements
+        self.filter_unseen_announcements()
+
+        # Process new announcements
+        self.process_unseen_announcements()
+
     def get_immoscout_active_announcements(self):
         """
         Get announcements online from the url
         """
-        announcements = []
-
         try:
             response_text = requests.post(ImmoScout.URL)
             announcements_json = response_text.json()
             announcements_resultlist = announcements_json["searchResponseModel"]["resultlist.resultlist"]
-            announcements = announcements_resultlist["resultlistEntries"][0]["resultlistEntry"]
+            active_announcements = announcements_resultlist["resultlistEntries"][0]["resultlistEntry"]
         except Exception as e:
-            logger.warn("Could not read any listed appartement")
-            announcements = []
+            logger.warn("Could not read any listed apartment")
+            active_announcements = []
 
-        if not type(announcements) is list:
-            announcements = [announcements]
+        if not type(active_announcements) is list:
+            active_announcements = [active_announcements]
 
-        self.active_announcements = announcements
+        self.active_announcements = active_announcements
 
     def get_already_seen_announcements(self):
         # Get already seen announcements from DB

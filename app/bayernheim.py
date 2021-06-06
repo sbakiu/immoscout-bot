@@ -11,6 +11,7 @@ import app.db as db
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class BayernHeim(object):
 
     COLLECTION_NAME = os.environ["BH_COLLECTION_NAME"]
@@ -19,8 +20,21 @@ class BayernHeim(object):
     def __init__(self):
         pass
 
-    @staticmethod
-    def get_bayernheim_hash():
+    def check_bayernheim_for_changes(self):
+        # Get hash values for the BayernHeim page
+        self.get_bayernheim_hash()
+
+        # Get hash value stored in database
+        self.get_stored_hash_from_db()
+
+        # Check if notification should be sent
+        should_notify = self.compare_bh_hashes()
+
+        if should_notify:
+            # Process BayernHeim page update
+            self.process_bayernheim_update()
+
+    def get_bayernheim_hash(self):
         """
         Get BayernHeim page hash
         """
@@ -30,24 +44,22 @@ class BayernHeim(object):
         hash_sha3_512 = sha3_512(mieten_text.encode("utf-8")).hexdigest()
         hash_obj = {"hash": hash_sha3_512}
         logger.info(f"Calculated hash: {hash_sha3_512}")
-        return hash_obj
+        self.hash_obj = hash_obj
 
-    @staticmethod
-    def get_stored_hash_from_db():
+    def get_stored_hash_from_db(self):
         # Get hash value stored in database
         db_obj = db.find_in_database(None, BayernHeim.COLLECTION_NAME)
-        return db_obj
+        self.db_obj = db_obj
 
-    @staticmethod
-    def compare_bh_hashes(db_obj, hash_obj):
+    def compare_bh_hashes(self):
         """
         Compare the web page hash with the one stored in database
         """
-        if db_obj is None:
+        if self.db_obj is None:
             logger.info("DB obj is none")
             return False
 
-        db_hash, web_hash = db_obj["hash"], hash_obj["hash"]
+        db_hash, web_hash = self.db_obj["hash"], self.hash_obj["hash"]
 
         return db_hash != web_hash
 
@@ -58,12 +70,11 @@ class BayernHeim(object):
         """
         return f"Changes in BayernHeim: {BayernHeim.URL}"
 
-    @staticmethod
-    def process_bayernheim_update(db_obj, hash_obj):
+    def process_bayernheim_update(self):
         """
         Update database and send notification for BayernHeim update
         """
-        db.update_in_database(db_obj["_id"], hash_obj, collection_name=BayernHeim.COLLECTION_NAME)
+        db.update_in_database(self.db_obj["_id"], self.hash_obj, collection_name=BayernHeim.COLLECTION_NAME)
         text = BayernHeim.prepare_bayernheim_text()
         bot = Bot()
         bot.push_notification(text=text)

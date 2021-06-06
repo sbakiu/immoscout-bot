@@ -1,12 +1,10 @@
 import logging
 import os
-
-from fastapi import FastAPI
-
 import app.utils as utils
 
 from app.bayernheim import BayernHeim
 from app.immoscout import ImmoScout
+from fastapi import FastAPI
 
 SECRET = os.environ["SECRET"]
 
@@ -16,32 +14,14 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 
-@app.get("/findplaces")
-def find_new_places(q: str = ""):
-    if not q:
-        return {"status": "FAILED"}
-    else:
-        search_bayernheim(q)
-        search_immobilienscout(q)
-        return {"status": "SUCCESS"}
-
-
 @app.get("/checkBayernheim")
 def search_bayernheim(q: str = ""):
     if utils.verify_secret(q, SECRET):
-        logger.info("Searching Bayernheim.")
+        logger.info("Searching BayernHeim.")
+        bayernheim = BayernHeim()
 
-        # Get hash values for the BayernHeim page
-        hash_obj = BayernHeim.get_bayernheim_hash()
-
-        # Get hash value stored in database
-        db_obj = BayernHeim.get_stored_hash_from_db()
-        # Check if notification should be sent
-        should_notify = BayernHeim.compare_bh_hashes(db_obj, hash_obj)
-
-        if should_notify:
-            # Process BayernHeim page update
-            BayernHeim.process_bayernheim_update(db_obj=db_obj, hash_obj=hash_obj)
+        # Check BayernHeim web for changes
+        bayernheim.check_bayernheim_for_changes()
 
     return {"status": "SUCCESS"}
 
@@ -49,19 +29,10 @@ def search_bayernheim(q: str = ""):
 @app.get("/checkimmobilienscout")
 def search_immobilienscout(q: str = ""):
     if utils.verify_secret(q, SECRET):
-        logger.info("Searching Immoscout")
+        logger.info("Searching ImmoScout")
         immoscout = ImmoScout()
 
-        # Get announcements in Immoscout
-        immoscout.get_immoscout_active_announcements()
-
-        # Get already seen announcements from DB
-        immoscout.get_already_seen_announcements()
-
-        # Filter unseen announcements
-        immoscout.filter_unseen_announcements()
-
-        # Process new announcements
-        immoscout.process_unseen_announcements()
+        # Check ImmoScout for new announcements
+        immoscout.check_immoscout_for_new_announcements()
 
     return {"status": "SUCCESS"}
