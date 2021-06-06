@@ -5,25 +5,16 @@ from fastapi import FastAPI
 
 from pymongo import MongoClient
 
-import app.db as db
 import app.utils as utils
 
-import telegram
+from app.bayernheim import BayernHeim
+from app.immoscout import ImmoScout
 
-BH_COLLECTION_NAME = os.environ["BH_COLLECTION_NAME"]
-IMMO_COLLECTION_NAME = os.environ["IMMO_COLLECTION_NAME"]
-
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
 SECRET = os.environ["SECRET"]
-
-IMMO_SEARCH_URL = os.environ["IMMO_SEARCH_URL"]
-BAYERNHEIM = "https://bayernheim.de/mieten/"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-bot = telegram.Bot(token=BOT_TOKEN)
 app = FastAPI()
 
 
@@ -43,24 +34,16 @@ def search_bayernheim(q: str = ""):
         logger.info("Searching Bayernheim.")
 
         # Get hash values for the BayernHeim page
-        hash_obj = utils.get_bayernheim_hash(BAYERNHEIM)
+        hash_obj = BayernHeim.get_bayernheim_hash()
 
         # Get hash value stored in database
-        db_obj = db.find_in_database(hash_obj, BH_COLLECTION_NAME)
-
+        db_obj = BayernHeim.get_stored_hash_from_db()
         # Check if notification should be sent
-        should_notify = utils.compare_bh_hashes(db_obj, hash_obj)
+        should_notify = BayernHeim.compare_bh_hashes(db_obj, hash_obj)
 
         if should_notify:
             # Process BayernHeim page update
-            utils.process_bayernheim_update(
-                bayernheim_link=BAYERNHEIM,
-                db_obj=db_obj,
-                hash_obj=hash_obj,
-                bayernheim_collection=BH_COLLECTION_NAME,
-                bot=bot,
-                chat_id=CHAT_ID
-            )
+            BayernHeim.process_bayernheim_update(db_obj=db_obj, hash_obj=hash_obj)
         else:
             logger.debug("Not Sending Notification")
 
@@ -72,22 +55,19 @@ def search_immobilienscout(q: str = ""):
     if utils.verify_secret(q, SECRET):
         logger.info("Searching Immoscout")
 
-        # Get apartments in Immoscout
-        apartments = utils.get_immoscout_apartments(immo_search_url=IMMO_SEARCH_URL)
+        # Get announcements in Immoscout
+        active_announcements = ImmoScout.get_immoscout_active_announcements()
 
         # Get already seen apartments from DB
-        seen_apartments = db.get_all_hashes_in_database(IMMO_COLLECTION_NAME)
+        seen_announcements = ImmoScout.get_already_seen_announcements()
 
         # Filter unseen apartments
-        unseen_apartments = utils.filter_unseen_apartments(apartments, seen_apartments)
+        unseen_announcements = ImmoScout.filter_unseen_announcements(active_announcements, seen_announcements)
 
         # Process new apartments
-        if unseen_apartments:
-            utils.process_unseen_apartments(
-                unseen_apartments=unseen_apartments,
-                bot=bot,
-                chat_id=CHAT_ID,
-                immo_collection_name=IMMO_COLLECTION_NAME
-            )
+        ImmoScout.process_unseen_apartments(
+            unseen_announcements=unseen_announcements,
+            immo_collection_name=ImmoScout.COLLECTION_NAME
+        )
 
     return {"status": "SUCCESS"}
