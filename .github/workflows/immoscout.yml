@@ -2,7 +2,7 @@ name: Shpibot scheduler
 
 on:
   schedule:
-    - cron: '*/30 7-21 * * *'
+    - cron: '10,20,30,40 7-21 * * *'
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
