@@ -17,9 +17,9 @@ class ImmoScout(object):
     def __init__(self):
         pass
 
-    def check_immoscout_for_new_announcements(self):
+    def check_for_new_announcements(self):
         # Get active announcements in ImmoScout
-        self.get_immoscout_active_announcements()
+        self.get_active_announcements()
 
         # Get already seen announcements from DB
         self.get_already_seen_announcements()
@@ -30,7 +30,7 @@ class ImmoScout(object):
         # Process new announcements
         self.process_unseen_announcements()
 
-    def get_immoscout_active_announcements(self):
+    def get_active_announcements(self):
         """
         Get announcements online from the url
         """

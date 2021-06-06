@@ -20,7 +20,7 @@ class BayernHeim(object):
     def __init__(self):
         pass
 
-    def check_bayernheim_for_changes(self):
+    def check_for_changes(self):
         # Get hash values for the BayernHeim page
         self.get_bayernheim_hash()
 

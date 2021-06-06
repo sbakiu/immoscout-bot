@@ -21,7 +21,7 @@ def search_bayernheim(q: str = ""):
         bayernheim = BayernHeim()
 
         # Check BayernHeim web for changes
-        bayernheim.check_bayernheim_for_changes()
+        bayernheim.check_for_changes()
 
     return {"status": "SUCCESS"}
 
@@ -33,6 +33,6 @@ def search_immobilienscout(q: str = ""):
         immoscout = ImmoScout()
 
         # Check ImmoScout for new announcements
-        immoscout.check_immoscout_for_new_announcements()
+        immoscout.check_for_new_announcements()
 
     return {"status": "SUCCESS"}
