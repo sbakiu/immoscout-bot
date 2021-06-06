@@ -3,8 +3,6 @@ import os
 
 from fastapi import FastAPI
 
-from pymongo import MongoClient
-
 import app.utils as utils
 
 from app.bayernheim import BayernHeim
@@ -44,8 +42,6 @@ def search_bayernheim(q: str = ""):
         if should_notify:
             # Process BayernHeim page update
             BayernHeim.process_bayernheim_update(db_obj=db_obj, hash_obj=hash_obj)
-        else:
-            logger.debug("Not Sending Notification")
 
     return {"status": "SUCCESS"}
 
@@ -54,20 +50,18 @@ def search_bayernheim(q: str = ""):
 def search_immobilienscout(q: str = ""):
     if utils.verify_secret(q, SECRET):
         logger.info("Searching Immoscout")
+        immoscout = ImmoScout()
 
         # Get announcements in Immoscout
-        active_announcements = ImmoScout.get_immoscout_active_announcements()
+        immoscout.get_immoscout_active_announcements()
 
-        # Get already seen apartments from DB
-        seen_announcements = ImmoScout.get_already_seen_announcements()
+        # Get already seen announcements from DB
+        immoscout.get_already_seen_announcements()
 
-        # Filter unseen apartments
-        unseen_announcements = ImmoScout.filter_unseen_announcements(active_announcements, seen_announcements)
+        # Filter unseen announcements
+        immoscout.filter_unseen_announcements()
 
-        # Process new apartments
-        ImmoScout.process_unseen_apartments(
-            unseen_announcements=unseen_announcements,
-            immo_collection_name=ImmoScout.COLLECTION_NAME
-        )
+        # Process new announcements
+        immoscout.process_unseen_announcements()
 
     return {"status": "SUCCESS"}

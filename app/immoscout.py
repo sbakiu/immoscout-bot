@@ -17,8 +17,7 @@ class ImmoScout(object):
     def __init__(self):
         pass
 
-    @staticmethod
-    def get_immoscout_active_announcements():
+    def get_immoscout_active_announcements(self):
         """
         Get announcements online from the url
         """
@@ -36,28 +35,26 @@ class ImmoScout(object):
         if not type(announcements) is list:
             announcements = [announcements]
 
-        return announcements
+        self.active_announcements = announcements
 
-    @staticmethod
-    def get_already_seen_announcements():
+    def get_already_seen_announcements(self):
         # Get already seen announcements from DB
         seen_announcements = db.get_all_hashes_in_database(ImmoScout.COLLECTION_NAME)
-        return seen_announcements
+        self.seen_announcements = seen_announcements
 
-    @staticmethod
-    def filter_unseen_announcements(active_announcements, seen_announcements):
+    def filter_unseen_announcements(self):
         """
         Filter announcements not yet seen
         """
         unseen_announcements = []
 
-        for announcement in active_announcements:
+        for announcement in self.active_announcements:
             hash_obj = {"hash": announcement["@id"]}
-            if not announcement["@id"] in seen_announcements:
+            if not announcement["@id"] in self.seen_announcements:
                 unseen_announcements.append(announcement)
-                seen_announcements.append(hash_obj)
+                self.seen_announcements.append(hash_obj)
 
-        return unseen_announcements
+        self.unseen_announcements = unseen_announcements
 
     @staticmethod
     def prepare_apartment_notification_text(apartment):
@@ -92,16 +89,15 @@ class ImmoScout(object):
 
         return price_warm
 
-    @staticmethod
-    def process_unseen_apartments(unseen_announcements, immo_collection_name):
+    def process_unseen_announcements(self):
         """
-        Process all unseen apartments
+        Process all unseen announcements
         """
-        if not unseen_announcements:
+        if not self.unseen_announcements:
             return
 
         # public_companies = ["GWG", "GEWOFAG"]
-        for unseen_announcement in unseen_announcements:
+        for unseen_announcement in self.unseen_announcements:
             apartment = unseen_announcement["resultlist.realEstate"]
             text = ImmoScout.prepare_apartment_notification_text(apartment)
 
@@ -118,6 +114,6 @@ class ImmoScout(object):
             # push_notification(data)
 
             # If you are interested only in public companies comment out the next line.
-            db.insert_to_database({"hash": apartment["@id"]}, collection_name=immo_collection_name)
+            db.insert_to_database({"hash": apartment["@id"]}, collection_name=ImmoScout.COLLECTION_NAME)
             bot = Bot()
             bot.push_notification(text=text)
