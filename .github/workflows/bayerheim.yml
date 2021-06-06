@@ -1,10 +1,8 @@
-# This is a basic workflow that is manually triggered
-
 name: Shpibot bayernheim scheduler
 
 on:
   schedule:
-  - cron: "00 12 * * *"
+    - cron: "0 12 * * *"
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
