@@ -33,9 +33,7 @@ class BayernHeim(object):
         self.get_stored_hash_from_db()
 
         # Check if notification should be sent
-        should_notify = self.compare_bh_hashes()
-
-        if should_notify:
+        if self.should_notify():
             # Process BayernHeim page update
             self.process_bayernheim_update()
 
@@ -46,12 +44,11 @@ class BayernHeim(object):
         bh = requests.get(BayernHeim.URL)
         bh_content = bh.content
 
-        soup = BeautifulSoup(bh_content, 'lxml')
+        soup = BeautifulSoup(bh_content, "lxml")
         first_article_text = soup.find_all("article")[0].get_text()
 
         hash_sha3_512 = sha3_512(first_article_text.encode("utf-8")).hexdigest()
         hash_obj = {"hash": hash_sha3_512}
-        logger.info(f"Calculated hash: {hash_sha3_512}")
         self.hash_obj = hash_obj
 
     def get_stored_hash_from_db(self):
@@ -59,17 +56,22 @@ class BayernHeim(object):
         db_obj = db.find_in_database(None, BayernHeim.COLLECTION_NAME)
         self.db_obj = db_obj
 
-    def compare_bh_hashes(self):
+    def should_notify(self):
         """
-        Compare the web page hash with the one stored in database
+        Compare the web page hash with the one stored in database and if different return True, otherwise False
         """
         if self.db_obj is None:
-            logger.info("DB obj is none")
+            logger.info("DB object is none.")
             return False
 
         db_hash, web_hash = self.db_obj["hash"], self.hash_obj["hash"]
 
-        return db_hash != web_hash
+        if db_hash == web_hash:
+            logger.info("Hash are equal.")
+            return False
+        else:
+            logger.info("Hash are not equal.")
+            return True
 
     @staticmethod
     def prepare_bayernheim_text():
