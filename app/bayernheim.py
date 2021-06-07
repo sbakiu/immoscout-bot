@@ -2,6 +2,8 @@ import logging
 import os
 import requests
 
+from bs4 import BeautifulSoup
+
 from hashlib import sha3_512
 
 from app.bot import Bot
@@ -15,7 +17,7 @@ logger = logging.getLogger(__name__)
 class BayernHeim(object):
 
     COLLECTION_NAME = os.environ["BH_COLLECTION_NAME"]
-    URL = "https://bayernheim.de/mieten/"
+    URL = "https://bayernheim.de"
 
     def __init__(self):
         """
@@ -39,12 +41,15 @@ class BayernHeim(object):
 
     def get_bayernheim_hash(self):
         """
-        Get BayernHeim page hash
+        Get BayernHeim first article hash
         """
-        mieten = requests.get(BayernHeim.URL)
-        mieten_text = mieten.text
+        bh = requests.get(BayernHeim.URL)
+        bh_content = bh.content
 
-        hash_sha3_512 = sha3_512(mieten_text.encode("utf-8")).hexdigest()
+        soup = BeautifulSoup(bh_content, 'lxml')
+        first_article_text = soup.find_all("article")[0].get_text()
+
+        hash_sha3_512 = sha3_512(first_article_text.encode("utf-8")).hexdigest()
         hash_obj = {"hash": hash_sha3_512}
         logger.info(f"Calculated hash: {hash_sha3_512}")
         self.hash_obj = hash_obj
