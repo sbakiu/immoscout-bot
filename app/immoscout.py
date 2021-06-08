@@ -46,7 +46,7 @@ class ImmoScout(object):
             announcements_resultlist = announcements_json["searchResponseModel"]["resultlist.resultlist"]
             active_announcements = announcements_resultlist["resultlistEntries"][0]["resultlistEntry"]
         except Exception as e:
-            logger.warn("Could not read any listed apartment")
+            logger.warning("Could not read any listed apartment")
             active_announcements = []
 
         if not type(active_announcements) is list:
