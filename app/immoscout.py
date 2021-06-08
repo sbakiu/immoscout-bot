@@ -21,6 +21,9 @@ class ImmoScout(object):
         pass
 
     def check_for_new_announcements(self):
+        """
+        Check for new announcements from URL
+        """
         # Get active announcements in ImmoScout
         self.get_active_announcements()
 
@@ -52,6 +55,9 @@ class ImmoScout(object):
         self.active_announcements = active_announcements
 
     def get_already_seen_announcements(self):
+        """
+        Get announcement Ids stored in the database
+        """
         # Get already seen announcements from DB
         seen_announcements = db.get_all_hashes_in_database(ImmoScout.COLLECTION_NAME)
         self.seen_announcements = seen_announcements
