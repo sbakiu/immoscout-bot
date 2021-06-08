@@ -6,9 +6,9 @@ This application sends push notifications for new announcements on Immobiliensco
 
 ## External services
 
-The application makes use of free services or free usage plans of a variety of online services. The services used are:
+The application uses free services or free usage plans of a variety of online services. The services used are:
 - [Heroku](https://heroku.com) - Serverless hosting platform with free plan available
-- [mongoDB Atlas](https://www.mongodb.com/cloud) - Free mongoDB hosting. We use this to store the already seen announcements.
+- [mongoDB Atlas](https://www.mongodb.com/cloud) - Free mongoDB hosting. Used to store the already seen announcements.
 - [Telegram](https://www.telegram.org/) - Cross-platform messaging application. Used to receive push notifications.
 
 Suggested, but not required:
@@ -16,11 +16,17 @@ Suggested, but not required:
 
 ## Set up
 
-After registering in Heroku and Telegram, one can start setting up the application and deploy it.
+After registering in Heroku, Atlas and Telegram, one can start setting up the application and deploy it.
 
 ### Install Heroku CLI
 
-First install on your local machine and login to [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli). Afterwards, select an application name and make it available as an environment variable:
+First install on your local machine [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) and login. 
+
+```
+heroku login
+```
+
+Afterwards, select an application name and store it in an environment variable:
 
 ```
 export APP_NAME=<YOUR_HEROKU_APP_NAME>
@@ -28,7 +34,7 @@ export APP_NAME=<YOUR_HEROKU_APP_NAME>
 
 ### Set up database
 
-Create a free accout at [Mongo Cloud](https://www.mongodb.com/cloud) and set up a user for accessing the database. Provide the database credentians and names as environment variables:
+Create a free account at [Mongo Cloud](https://www.mongodb.com/cloud) and set up a user for accessing the database. Provide the database credentials, database name and collection names as environment variables:
 
 ```
 export DB_USERNAME=<YOUR_DB_USERNAME>
@@ -39,20 +45,19 @@ export IMMO_COLLECTION_NAME=<YOUR_IMMO_COLLECTION_NAME>
 ```
 
 ### Store API secrets for deployment in Heroku
-
-In order not to share the secrets, Heroku's secret injection feature can be utilized. It provies a secret storage, which are used during deployment to populate environment variables.
+To keep the secrets safe, you can use Heroku's secret injection feature. 
+It provides secure storage. After the deployment, the values are make available as environment variables.
 
 
 ### Telegram bot
-Use BotFather to create a bot in telegram. Short explanation is [here](https://core.telegram.org/bots#6-botfather).
-Basically find BotFather in Telegram and send the message `/newbot` and follow the instructions.
-After you have created the bot you should have gotten a token that allows you to control the bot, something like `110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw`.
+Use BotFather to create a bot in telegram. Follow the guide [here](https://core.telegram.org/bots#6-botfather).
+After you have created the bot, you should receive a token that allows you to communicate with the bot, something like `110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw`.
 
 ```
 $ export BOT_TOKEN=<TELEGRAM_BOT_TOKEN>
 ```
 
-From Telegram it is also needed a chat id, i.e. the id of your chat with the bot. 
+From Telegram, it is also needed a chat id, i.e. the id of your chat with the bot. 
 After writing a couple of dummy messages to the bot, run this command to get the id:
 ```
 $ curl https://api.telegram.org/bot<YourBOTToken>/getUpdates
@@ -110,7 +115,7 @@ export IMMO_SEARCH_URL=<YOUR_IMMO_URL>
 heroku config:set -a $APP_NAME IMMO_SEARCH_URL=<IMMOSEARCH_URL>
 ```
 
-Feel free to go crazy with search criteria, one just needs to update the variable.
+Feel free to go crazy with the search criteria.
 
 ### Deploy
 
@@ -118,4 +123,6 @@ Application deployment gets invoked on every git push, via GitHub Integration.
 
 ### Execute
 
-The application offers a single GET endpoint `/findplaces`. It returns the unseen apartments as a json, and it sends a notification for each of them via Telegram. On the same endpoint, one can set up the regular execution.
+The application offers a single GET endpoint `/findplaces`. 
+It returns the unseen announcements as a json list, and it sends a notification for each of them via Telegram. 
+On the same endpoint, one can set up the regular execution.
