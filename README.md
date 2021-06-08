@@ -2,17 +2,17 @@
 
 ## Purpose
 
-This application is built to send push notifications for new apartments using an ImmobilienScout search query.
+This application sends push notifications for new announcements on Immobilienscount based on a search query.
 
 ## External services
 
-The application is built to be hosted for free and using the free plans of a variaty of online services. The services used are:
+The application makes use of free services or free usage plans of a variety of online services. The services used are:
 - [Heroku](https://heroku.com) - Serverless hosting platform with free plan available
-- [mongoDB Atlas](https://www.mongodb.com/cloud) - Free mongoDB hosting. We use this to store what apartments has been seen.
+- [mongoDB Atlas](https://www.mongodb.com/cloud) - Free mongoDB hosting. We use this to store the already seen announcements.
 - [Telegram](https://www.telegram.org/) - Cross-platform messaging application. Used to receive push notifications.
 
 Suggested, but not required:
-- [Github Actions](https://github.com/features/actions) - Used to trigger the application based on a defined schedule
+- [Pipedream](https://pipedream.com) - Used to trigger the application based on a defined schedule
 
 ## Set up
 
@@ -43,10 +43,10 @@ export IMMO_COLLECTION_NAME=<YOUR_IMMO_COLLECTION_NAME>
 In order not to share the secrets, Heroku's secret injection feature can be utilized. It provies a secret storage, which are used during deployment to populate environment variables.
 
 
-### Telegram chat bot
-Use BotFather to create a chat bot in telegram. Short explanation is [here](https://core.telegram.org/bots#6-botfather).
+### Telegram bot
+Use BotFather to create a bot in telegram. Short explanation is [here](https://core.telegram.org/bots#6-botfather).
 Basically find BotFather in Telegram and send the message `/newbot` and follow the instructions.
-After you have created the chat bot you should have gotten a token that allows you to control the bot, something like `110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw`.
+After you have created the bot you should have gotten a token that allows you to control the bot, something like `110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw`.
 
 ```
 $ export BOT_TOKEN=<TELEGRAM_BOT_TOKEN>
@@ -78,11 +78,11 @@ After finding the chat id, export it:
 ```
 $ export CHAT_ID=<TELEGRAM_BOT_CHAT_ID>
 ```
-If the response does not look like that write a couple of more messages to the bot.
+If the response does not look like that, write a couple of more messages to the bot.
 
 ### Last steps
 
-Finally, one can set up the configuration varialbes:
+Finally, one can set up the configuration variables:
 ```
 heroku config:set -a $APP_NAME DB_NAME=$DB_NAME
 heroku config:set -a $APP_NAME DB_USERNAME=$DB_USERNAME
@@ -100,9 +100,9 @@ heroku config:set -a $APP_NAME SECRET=<SECRET>
 
 The variable `IMMO_SEARCH_URL` is just an ImmobilienScout24 URL. 
 
-This URL is used for scraping and for a properly functioning application you should make sure that the URL is having the following properties:
-- Apartments are in list view (and not map)
-- Sorted by date, so that newest are first. This is expecially important as you only request the first page and looking for new stuff on that page.
+This URL is used for scraping. For a properly functioning application you should make sure that the URL is having the following properties:
+- Apartments are in list view (not map view)
+- Sorted by date, so that newest are first. This is especially important as you only request the first page and looking for new stuff on that page.
 
 After getting the URL from the browser, run: 
 ```
@@ -110,11 +110,11 @@ export IMMO_SEARCH_URL=<YOUR_IMMO_URL>
 heroku config:set -a $APP_NAME IMMO_SEARCH_URL=<IMMOSEARCH_URL>
 ```
 
-Feel free to go crazy with search criterias, one just needs to update the variable.
+Feel free to go crazy with search criteria, one just needs to update the variable.
 
 ### Deploy
 
-Application deployment is invoked in every git push, via GitHub Integration.
+Application deployment gets invoked on every git push, via GitHub Integration.
 
 ### Execute
 
