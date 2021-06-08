@@ -26,6 +26,9 @@ class BayernHeim(object):
         pass
 
     def check_for_changes(self):
+        """
+        Check for changes in URL
+        """
         # Get hash values for the BayernHeim page
         self.get_bayernheim_hash()
 
@@ -52,6 +55,9 @@ class BayernHeim(object):
         self.hash_obj = hash_obj
 
     def get_stored_hash_from_db(self):
+        """
+        Get stored hash value from the database
+        """
         # Get hash value stored in database
         db_obj = db.find_in_database(None, BayernHeim.COLLECTION_NAME)
         self.db_obj = db_obj
