@@ -33,7 +33,7 @@ class BayernHeim(object):
         self.get_bayernheim_hash()
 
         # Get hash value stored in database
-        self.get_stored_hash_from_db()
+        self.get_hash_from_db()
 
         # Check if notification should be sent
         if self.should_notify():
@@ -54,9 +54,9 @@ class BayernHeim(object):
         hash_obj = {"hash": hash_sha3_512}
         self.hash_obj = hash_obj
 
-    def get_stored_hash_from_db(self):
+    def get_hash_from_db(self):
         """
-        Get stored hash value from the database
+        Get hash value stored in the database
         """
         # Get hash value stored in database
         db_obj = db.find_in_database(None, BayernHeim.COLLECTION_NAME)
@@ -64,7 +64,7 @@ class BayernHeim(object):
 
     def should_notify(self):
         """
-        Compare the web page hash with the one stored in database and if different return True, otherwise False
+        Compare the web page hash with the one fetched from the database. If different return True, otherwise False
         """
         if self.db_obj is None:
             logger.info("DB object is none.")

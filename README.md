@@ -1,4 +1,4 @@
-# ImmobilienScout instant notifier
+# ImmobilienScout Telegram Notifier
 
 ## Purpose
 
@@ -103,19 +103,17 @@ heroku config:set -a $APP_NAME SECRET=<SECRET>
 
 ### Customize ImmobilienScout search link
 
-The variable `IMMO_SEARCH_URL` is just an ImmobilienScout24 URL. 
+The variable `IMMO_SEARCH_URL` is an ImmobilienScout24 URL. 
 
-This URL is used for scraping. For a properly functioning application you should make sure that the URL is having the following properties:
+The scrapping process monitors this URL. For the application to work properly, you should make sure the URL has the following properties:
 - Apartments are in list view (not map view)
-- Sorted by date, so that newest are first. This is especially important as you only request the first page and looking for new stuff on that page.
+- Sorted by date the newest first. This is important as the application only checks the first page of the results.
 
-After getting the URL from the browser, run: 
+After getting the URL from the browser, run in the terminal: 
 ```
 export IMMO_SEARCH_URL=<YOUR_IMMO_URL>
 heroku config:set -a $APP_NAME IMMO_SEARCH_URL=<IMMOSEARCH_URL>
 ```
-
-Feel free to go crazy with the search criteria.
 
 ### Deploy
 
@@ -123,6 +121,5 @@ Application deployment gets invoked on every git push, via GitHub Integration.
 
 ### Execute
 
-The application offers a single GET endpoint `/findplaces`. 
-It returns the unseen announcements as a json list, and it sends a notification for each of them via Telegram. 
-On the same endpoint, one can set up the regular execution.
+The application offers a single GET endpoint `/checkimmobilienscout`. 
+It returns the unseen announcements as a `json` list, and sends a notification for each of them via Telegram.
