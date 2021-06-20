@@ -28,9 +28,6 @@ class ImmoScout(object):
         # Get active announcements in ImmoScout
         self.get_active_announcements()
 
-        # Get already seen announcements from DB
-        self.get_already_seen_announcements()
-
         # Filter unseen announcements
         self.filter_unseen_announcements()
 
@@ -75,14 +72,6 @@ class ImmoScout(object):
 
         return active_announcements_list
 
-    def get_already_seen_announcements(self):
-        """
-        Get announcement Ids stored in the database
-        """
-        # Get already seen announcements from DB
-        seen_announcements = db.get_all_hashes_in_database(ImmoScout.COLLECTION_NAME)
-        self.seen_announcements = seen_announcements
-
     def filter_unseen_announcements(self):
         """
         Filter announcements not yet seen
@@ -91,9 +80,9 @@ class ImmoScout(object):
 
         for announcement in self.active_announcements:
             hash_obj = {"hash": announcement["@id"]}
-            if not announcement["@id"] in self.seen_announcements:
+            collection = db.get_db_collection(collection_name=ImmoScout.COLLECTION_NAME)
+            if not collection.count_documents(hash_obj, limit=1):
                 unseen_announcements.append(announcement)
-                self.seen_announcements.append(hash_obj)
 
         self.unseen_announcements = unseen_announcements
 
