@@ -12,13 +12,14 @@ logger = logging.getLogger(__name__)
 
 class ImmoScout(object):
     COLLECTION_NAME = os.environ["IMMO_COLLECTION_NAME"]
-    URL = os.environ["IMMO_SEARCH_URL"]
+    URLS = os.environ["IMMO_SEARCH_URL"]
+    SPLIT_CHAR = ";"
 
     def __init__(self):
         """
-        Empty method. Might be filled later
+        Split URLs to be checked
         """
-        pass
+        self.immo_urls = ImmoScout.URLS.split(ImmoScout.SPLIT_CHAR)
 
     def check_for_new_announcements(self):
         """
@@ -38,21 +39,37 @@ class ImmoScout(object):
 
     def get_active_announcements(self):
         """
-        Get announcements online from the url
+        Get announcements online from the urls
         """
-        try:
-            response_text = requests.post(ImmoScout.URL)
-            announcements_json = response_text.json()
-            announcements_resultlist = announcements_json["searchResponseModel"]["resultlist.resultlist"]
-            active_announcements = announcements_resultlist["resultlistEntries"][0]["resultlistEntry"]
-        except Exception as e:
-            logger.warning("Could not read any listed apartment")
-            active_announcements = []
 
-        if not type(active_announcements) is list:
-            active_announcements = [active_announcements]
+        active_announcements_list = self.get_all_active_announcements()
 
-        self.active_announcements = active_announcements
+        # Get unique announcements
+        active_announcement_dict = {
+            active_announcement.get("@id"): active_announcement for active_announcement in active_announcements_list
+        }
+
+        self.active_announcements = list(active_announcement_dict.values())
+
+    def get_all_active_announcements(self):
+        active_announcements_list = []
+        # Iterate over all urls
+        for url in self.immo_urls:
+            try:
+                response_text = requests.post(url)
+                announcements_json = response_text.json()
+                announcements_resultlist = announcements_json["searchResponseModel"]["resultlist.resultlist"]
+                url_active_announcements = announcements_resultlist["resultlistEntries"][0]["resultlistEntry"]
+            except Exception as e:
+                logger.warning("Could not read any listed apartment")
+                url_active_announcements = []
+
+            if not type(url_active_announcements) is list:
+                url_active_announcements = [url_active_announcements]
+
+            active_announcements_list.extend(url_active_announcements)
+
+        return active_announcements_list
 
     def get_already_seen_announcements(self):
         """
