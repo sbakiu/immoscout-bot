@@ -12,13 +12,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+bayernheim = BayernHeim()
+immoscout = ImmoScout()
 
 
 @app.get("/checkBayernheim")
 def search_bayernheim(q: str = ""):
     if utils.verify_secret(q, SECRET):
         logger.info("Searching BayernHeim.")
-        bayernheim = BayernHeim()
 
         # Check BayernHeim web for changes
         bayernheim.check_for_changes()
@@ -30,7 +31,6 @@ def search_bayernheim(q: str = ""):
 def search_immobilienscout(q: str = ""):
     if utils.verify_secret(q, SECRET):
         logger.info("Searching ImmoScout")
-        immoscout = ImmoScout()
 
         # Check ImmoScout for new announcements
         immoscout.check_for_new_announcements()

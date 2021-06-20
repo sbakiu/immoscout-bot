@@ -21,7 +21,17 @@ class ImmoScout(object):
         """
         Split URLs to be checked
         """
+        logger.info("Initializing ImmoScout.")
         self.immo_urls = ImmoScout.URLS.split(ImmoScout.SPLIT_CHAR)
+        self.cache = ImmoScout.populate_cache()
+
+    @staticmethod
+    def populate_cache():
+        """
+        Initialize Immoscout cache
+        """
+        logger.info("Initializing cache.")
+        return db.get_hashes_in_database(collection_name=ImmoScout.COLLECTION_NAME)
 
     def check_for_new_announcements(self):
         """
@@ -83,12 +93,33 @@ class ImmoScout(object):
 
         for announcement in self.active_announcements:
             announcement_id = announcement["@id"]
-            logger.info(f"Checking ID: {announcement_id} in the database.")
-            hash_obj = {"hash": announcement_id}
-            if not collection.count_documents(hash_obj, limit=1):
-                unseen_announcements.append(announcement)
+
+            if self.check_if_announcement_not_seen_yet(announcement_id, collection):
+                hash_obj = {"hash": announcement_id}
+                if not collection.count_documents(hash_obj, limit=1):
+                    unseen_announcements.append(announcement)
 
         self.unseen_announcements = unseen_announcements
+
+    def check_if_announcement_not_seen_yet(self, announcement_id: int, collection) -> bool:
+        """
+        Check if announcement is in the DB on in the local cache
+        :param announcement_id:
+        :param collection:
+        :return:
+        """
+        if announcement_id in self.cache:
+            logger.info(f"Checking ID: {announcement_id} in the cache.")
+            return False
+
+        self.cache.append(announcement_id)
+
+        hash_obj = {"hash": announcement_id}
+        if collection.count_documents(hash_obj, limit=1):
+            logger.info(f"Checking ID: {announcement_id} in the database.")
+            return False
+        else:
+            return True
 
     @staticmethod
     def prepare_apartment_notification_text(apartment: dict) -> str:

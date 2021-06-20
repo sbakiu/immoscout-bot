@@ -50,3 +50,15 @@ def find_in_database(hash_obj: dict, collection_name: str):
 
     db_obj = collection.find_one(hash_obj)
     return db_obj
+
+
+def get_hashes_in_database(collection_name: str, limit: int = 50):
+    """
+    Get latest 15 objects in MongoDB collection
+    """
+    collection = get_db_collection(collection_name=collection_name)
+    db_objs = collection.find().sort("_id", -1).limit(limit)
+    hashes_in_db = []
+    for db_obj in db_objs:
+        hashes_in_db.append(db_obj["hash"])
+    return hashes_in_db
