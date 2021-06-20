@@ -3,6 +3,8 @@ import os
 import re
 import requests
 
+from typing import List
+
 from app.bot import Bot
 import app.db as db
 
@@ -48,7 +50,7 @@ class ImmoScout(object):
 
         self.active_announcements = list(active_announcement_dict.values())
 
-    def get_all_active_announcements(self):
+    def get_all_active_announcements(self) -> List[dict]:
         """
         Get all active announcements for all urls
         :return:
@@ -77,17 +79,19 @@ class ImmoScout(object):
         Filter announcements not yet seen
         """
         unseen_announcements = []
+        collection = db.get_db_collection(collection_name=ImmoScout.COLLECTION_NAME)
 
         for announcement in self.active_announcements:
-            hash_obj = {"hash": announcement["@id"]}
-            collection = db.get_db_collection(collection_name=ImmoScout.COLLECTION_NAME)
+            announcement_id = announcement["@id"]
+            logger.info(f"Checking ID: {announcement_id} in the database.")
+            hash_obj = {"hash": announcement_id}
             if not collection.count_documents(hash_obj, limit=1):
                 unseen_announcements.append(announcement)
 
         self.unseen_announcements = unseen_announcements
 
     @staticmethod
-    def prepare_apartment_notification_text(apartment):
+    def prepare_apartment_notification_text(apartment: dict) -> str:
         """
         Prepare notification text for the apartment
         """
@@ -104,7 +108,7 @@ class ImmoScout(object):
         return text_with_link
 
     @staticmethod
-    def get_price_from_text(apartment):
+    def get_price_from_text(apartment: dict) -> str:
         """
         Get price value from apartment text
         """
@@ -117,7 +121,7 @@ class ImmoScout(object):
             except Exception as e:
                 logger.info(f"Error with Apartment: {str(apartment)} ")
 
-        return price_warm
+        return str(price_warm)
 
     def process_unseen_announcements(self):
         """
