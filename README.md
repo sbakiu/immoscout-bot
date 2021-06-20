@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This application sends push notifications for new announcements on Immobilienscount based on a search query.
+This application sends push notifications for new announcements on Immobilienscount based on at least one search query.
 
 ## External services
 
@@ -103,15 +103,15 @@ heroku config:set -a $APP_NAME SECRET=<SECRET>
 
 ### Customize ImmobilienScout search link
 
-The variable `IMMO_SEARCH_URL` is an ImmobilienScout24 URL. 
+The variable `IMMO_SEARCH_URL` is one ImmobilienScout24 URL or a list of them split by `;`. 
 
-The scrapping process monitors this URL. For the application to work properly, you should make sure the URL has the following properties:
+The scrapping process monitors these URLs. For the application to work properly, you should make sure the URLs have the following properties:
 - Apartments are in list view (not map view)
 - Sorted by date the newest first. This is important as the application only checks the first page of the results.
 
-After getting the URL from the browser, run in the terminal: 
+After getting the URLs from the browser, run in the terminal: 
 ```
-export IMMO_SEARCH_URL=<YOUR_IMMO_URL>
+export IMMO_SEARCH_URL=<YOUR_IMMO_URL_1>;<YOUR_IMMO_URL_2>
 heroku config:set -a $APP_NAME IMMO_SEARCH_URL=<IMMOSEARCH_URL>
 ```
 
