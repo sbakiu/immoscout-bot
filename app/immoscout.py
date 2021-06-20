@@ -52,6 +52,10 @@ class ImmoScout(object):
         self.active_announcements = list(active_announcement_dict.values())
 
     def get_all_active_announcements(self):
+        """
+        Get all active announcements for all urls
+        :return:
+        """
         active_announcements_list = []
         # Iterate over all urls
         for url in self.immo_urls:

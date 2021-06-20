@@ -14,4 +14,4 @@ class Bot(object):
         """
         Push Telegram notification
         """
-        self.bot.send_message(chat_id=Bot.CHAT_ID, text=text, parse_mode="Markdown")
+        self.bot.send_message(chat_id=Bot.CHAT_ID, text=text, parse_mode="Markdown", timeout=15)
