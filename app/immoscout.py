@@ -15,20 +15,20 @@ logger = logging.getLogger(__name__)
 class ImmoScout(object):
     COLLECTION_NAME = os.environ["IMMO_COLLECTION_NAME"]
     URLS = os.environ["IMMO_SEARCH_URL"]
-    SPLIT_CHAR = ";"
+    URL_SPLIT_CHAR = ";"
 
     def __init__(self):
         """
         Split URLs to be checked
         """
         logger.info("Initializing ImmoScout.")
-        self.immo_urls = ImmoScout.URLS.split(ImmoScout.SPLIT_CHAR)
-        self.cache = ImmoScout.populate_cache()
+        self.immo_urls = ImmoScout.URLS.split(ImmoScout.URL_SPLIT_CHAR)
+        self.cache = ImmoScout._populate_cache()
 
     @staticmethod
-    def populate_cache():
+    def _populate_cache() -> List[str]:
         """
-        Initialize Immoscout cache
+        Initialize ImmoScout cache
         """
         logger.info("Initializing cache.")
         return db.get_hashes_in_database(collection_name=ImmoScout.COLLECTION_NAME)
@@ -50,7 +50,6 @@ class ImmoScout(object):
         """
         Get announcements online from the urls
         """
-
         active_announcements_list = self.get_all_active_announcements()
 
         # Get unique announcements
@@ -95,13 +94,11 @@ class ImmoScout(object):
             announcement_id = announcement["@id"]
 
             if self.check_if_announcement_not_seen_yet(announcement_id, collection):
-                hash_obj = {"hash": announcement_id}
-                if not collection.count_documents(hash_obj, limit=1):
-                    unseen_announcements.append(announcement)
+                unseen_announcements.append(announcement)
 
         self.unseen_announcements = unseen_announcements
 
-    def check_if_announcement_not_seen_yet(self, announcement_id: int, collection) -> bool:
+    def check_if_announcement_not_seen_yet(self, announcement_id: str, collection) -> bool:
         """
         Check if announcement is in the DB on in the local cache
         :param announcement_id:
