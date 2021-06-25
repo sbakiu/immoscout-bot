@@ -163,10 +163,8 @@ class ImmoScout(object):
             apartment = unseen_announcement["resultlist.realEstate"]
             text = ImmoScout.prepare_apartment_notification_text(apartment)
 
-            # If you are interested only in public companies uncomment the next 2 line.
+            # If you are interested only in public companies uncomment the next instructions
             # is_public = False
-
-            # If you are interested only in public companies comment out the following lines.
             # if 'realtorCompanyName' in apartment:
             #     company = apartment['realtorCompanyName'].upper()
             #     for c in public_companies:
