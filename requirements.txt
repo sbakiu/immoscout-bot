@@ -5,4 +5,4 @@ python-telegram-bot==13.6
 fastapi==0.65.2
 uvicorn==0.14.0
 beautifulsoup4==4.9.3
-lxml==4.6.3
+lxml==4.6.5
